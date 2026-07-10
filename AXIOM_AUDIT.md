@@ -75,6 +75,13 @@ Lean-proved manuscript input already used:
 - counted block-swap inversion rectangle, via
   `manuscript_lem_inversions_count`.
 
+Status:
+
+- This is no longer a top-level axiom in `ExternalTheorems.lean`.
+- It is now a Lean theorem routed through
+  `gao_xiong_refined_graham_positive_for_cycle` in
+  `Geometry/ExternalFacts.lean`.
+
 Role:
 
 - Gives positivity of Schubert coefficients for an effective
@@ -86,20 +93,80 @@ These are not acceptable final stopping points. They are temporary interfaces
 for geometric infrastructure that we must either formalize or replace by
 smaller cited theorems.
 
+### `incidence_theorem_properties`
+
+Manuscript label:
+
+- Theorem `thm:incidence`.
+
+Role:
+
+- Packages reducedness, local irreducibility, and pure codimension for the
+  incidence scheme.
+
+Next reduction target:
+
+- Prove using FW--Mihalcea preimage theorem, Kontsevich moduli irreducibility,
+  the conjugation lemma, and the expected-codimension pullback formula.
+
+### `incidenceSchemeInvariant`
+
+Manuscript label:
+
+- Proposition `prop:invariance`.
+
+Role:
+
+- States that the incidence scheme is stable under the group `B^-(tau)`.
+
+Next reduction target:
+
+- Prove from stability of `tau X_u`, stability of `X_v`, and equivariance of
+  `(ev₁,ev₂)`.
+
+### `incidenceInclusion_equivariant`
+
+Manuscript label:
+
+- Proposition `prop:invariance`.
+
+Role:
+
+- States that the inclusion from the incidence scheme into the stable-map space
+  is equivariant.
+
+Next reduction target:
+
+- Prove from `incidenceSchemeInvariant`.
+
+### `stableMapEv3_equivariant`
+
+Manuscript label:
+
+- Proposition `prop:invariance`.
+
+Role:
+
+- States that the third evaluation map on the stable-map space is equivariant.
+
+Next reduction target:
+
+- Prove from the post-composition group action on stable maps.
+
 ### `incidenceFundamentalCycleEffective`
 
 Manuscript label:
 
 - Part of Proposition `prop:invariance`.
 
-Role:
+Status:
 
-- States that the fundamental cycle of the incidence scheme is effective.
+- This is now a Lean theorem, not an axiom.
 
-Next reduction target:
+Proved from:
 
-- Prove from Theorem `thm:incidence` plus the definition of fundamental cycle
-  for a reduced scheme.
+- `incidence_theorem_properties`;
+- `fundamental_cycle_effective_of_reduced`.
 
 ### `incidenceFundamentalCycleInvariant`
 
@@ -107,15 +174,14 @@ Manuscript label:
 
 - Part of Proposition `prop:invariance`.
 
-Role:
+Status:
 
-- States that the incidence fundamental cycle is invariant under
-  `B^-(tau)`.
+- This is now a Lean theorem, not an axiom.
 
-Next reduction target:
+Proved from:
 
-- Prove from stability of `tau X_u × X_v`, equivariance of the evaluation maps,
-  and connectedness of `B^-(tau)` acting on irreducible components.
+- `incidenceSchemeInvariant`;
+- `fundamental_cycle_invariant_of_invariant_scheme`.
 
 ### `ev3_equivariant`
 
@@ -123,14 +189,15 @@ Manuscript label:
 
 - Used in Proposition `prop:invariance`.
 
-Role:
+Status:
 
-- States that the third evaluation map is equivariant for the relevant group
-  action.
+- This is now a Lean theorem, not an axiom.
 
-Next reduction target:
+Proved from:
 
-- Prove from the definition of the post-composition action on stable-map spaces.
+- `incidenceInclusion_equivariant`;
+- `stableMapEv3_equivariant`;
+- `equivariant_comp`.
 
 ## General Geometry Axioms
 
