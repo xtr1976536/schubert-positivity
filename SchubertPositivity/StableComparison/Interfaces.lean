@@ -1,4 +1,5 @@
 import SchubertPositivity.StableComparison.Specialization
+import SchubertPositivity.StableComparison.Basis
 
 /-!
 Small Lam--Shimozono/Kim interfaces used to prove the stable-finite comparison.
@@ -10,6 +11,10 @@ namespace StableComparison
 opaque stableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque finiteTwistedCoeff : Nat → Perm → Perm → Perm → QuantumPoly
 opaque finiteProductCoeff : Nat → Perm → Perm → Perm → QuantumPoly
+opaque KimQuotient : Nat → Type
+
+opaque kimSchubertBasis :
+    (N : Nat) → BasisExpansion Perm QuantumPoly (KimQuotient N)
 
 def specializedStableCoeff (N : Nat) (u v w : Perm) : QuantumPoly :=
   specializeQuantumPoly N (stableCoeff u v w)
@@ -67,15 +72,33 @@ axiom stable_product_specializes_to_finite_product :
       data.qBound ≤ N →
         specializedStableCoeff N u v w = finiteProductCoeff N u v w
 
-/- Kim's quantum Schubert classes form a basis, so two finite quotient
-expansions with the same product have identical coefficients. -/
-axiom kim_basis_unique_coefficients :
+/- The external Kim-Schubert input now only says that the finite product
+expansion and the twisted Gromov-Witten expansion represent the same element in
+the finite Kim quotient.  Coefficient uniqueness is proved generically in
+`Basis.lean`. -/
+axiom kim_schubert_basis_expansion_eq :
+    ∀ (N : Nat) (u v : Perm),
+      0 < N →
+      PermInRank N u →
+      PermInRank N v →
+        (kimSchubertBasis N).linearCombination
+          (fun z => finiteProductCoeff N u v z) =
+        (kimSchubertBasis N).linearCombination
+          (fun z => finiteTwistedCoeff N u v z)
+
+theorem kim_basis_unique_coefficients :
     ∀ (N : Nat) (u v w : Perm),
       0 < N →
       PermInRank N u →
       PermInRank N v →
       PermInRank N w →
         finiteProductCoeff N u v w = finiteTwistedCoeff N u v w
+    := by
+  intro N u v w hN hu hv _hw
+  exact BasisExpansion.coefficients_eq_of_expansion_eq
+    (kimSchubertBasis N)
+    (kim_schubert_basis_expansion_eq N u v hN hu hv)
+    w
 
 /- The former one-step finite comparison is now an internal theorem obtained by
 chaining finite specialization, product identification, and Kim-basis
