@@ -52,6 +52,10 @@ structure IncidenceProperties
   locallyIrreducible : IsLocallyIrreducible (IncidenceScheme n u v d)
   pureCodim : ∃ c : Nat, IsPureCodimension (IncidenceScheme n u v d) c
 
+axiom stableMapEv12_equivariant :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
+
 /- Manuscript Theorem `thm:incidence`, geometric-property part. -/
 theorem incidence_theorem_properties :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
@@ -91,10 +95,6 @@ axiom incidenceConditionInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v)
-
-axiom stableMapEv12_equivariant :
-    ∀ (n : Nat) (d : Degree),
-      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
 
 theorem incidenceSchemeInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
