@@ -1,6 +1,7 @@
 import Std
 import SchubertPositivity.Core
 import SchubertPositivity.PositivePolynomials
+import SchubertPositivity.StableComparison.Interfaces
 import SchubertPositivity.Geometry.Basic
 import SchubertPositivity.Geometry.ExternalFacts
 import SchubertPositivity.Geometry.Incidence
@@ -19,8 +20,10 @@ abbrev Coeff : Type := RawPoly
 
 abbrev QuantumPoly : Type := Degree → Coeff
 
-opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
-opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
+def StableCoeff : Perm → Perm → Perm → QuantumPoly :=
+  StableComparison.stableCoeff
+def TwistedGWCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
+  StableComparison.finiteTwistedCoeff n u v w d
 opaque permAsWeyl : Nat → Perm → WeylElement
 
 def IncidenceCycle (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
@@ -30,7 +33,7 @@ def IncidenceCycleCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
   schubertCoefficient (IncidenceCycle n u v d) (permAsWeyl n w)
 
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
-  TwistedGWCoeff n u v w
+  StableComparison.finiteTwistedCoeff n u v w
 
 def CoeffPositive : Coeff → Prop := RawPoly.Positive
 def BminusTauGroup : Nat → Group := IncidenceGroup
@@ -45,10 +48,11 @@ def InPositiveCone (P : QuantumPoly) : Prop :=
    `prop:stable-finite`: stable Schubert representatives, finite-rank
    specialization, basis uniqueness, and finite support for the coefficient.
 -/
-axiom lam_shimozono_stable_finite_comparison :
+theorem lam_shimozono_stable_finite_comparison :
     ∀ u v w : Perm,
       ∃ n : Nat, 0 < n ∧
-        StableCoeff u v w = FiniteTwistedCoeff n u v w
+        StableCoeff u v w = FiniteTwistedCoeff n u v w := by
+  exact StableComparison.stable_finite_comparison_from_interfaces
 
 /- Manuscript Proposition `prop:stable-finite`, exposed under the paper label. -/
 theorem stable_finite_comparison :
