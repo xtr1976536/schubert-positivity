@@ -13,17 +13,21 @@ namespace SchubertPositivity
 opaque Perm : Type
 opaque Degree : Type
 opaque Coeff : Type
+opaque Cycle : Type
 
 abbrev QuantumPoly : Type := Degree → Coeff
 
 opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
 opaque IncidenceCycleCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
+opaque IncidenceCycle : Nat → Perm → Perm → Degree → Cycle
+opaque SchubertCoeffOfCycle : Cycle → Perm → Coeff
 
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
 
 opaque CoeffPositive : Coeff → Prop
+opaque EffectiveBminusTauInvariant : Nat → Cycle → Prop
 
 def InPositiveCone (P : QuantumPoly) : Prop :=
   ∀ d : Degree, CoeffPositive (P d)
@@ -70,21 +74,44 @@ theorem incidence_expression_coefficient :
       TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d := by
   exact mihalcea_projection_duality_coefficient
 
+/- Definition-level compatibility between the coefficient notation used for the
+   incidence cycle and the abstract cycle coefficient.
+-/
+axiom incidence_cycle_coefficient_def :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      IncidenceCycleCoeff n u v w d =
+        SchubertCoeffOfCycle (IncidenceCycle n u v d) w
+
+/- Manuscript Proposition `prop:invariance`, recorded at the cycle-property
+   level.  Its proof uses equivariance of evaluation maps, stability of
+   `tau X_u` and `X_v`, connectedness of `B^-(tau)`, and proper pushforward
+   preserving effectivity.
+-/
+axiom incidence_cycle_effective_invariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        EffectiveBminusTauInvariant n (IncidenceCycle n u v d)
+
 /- External Gao--Xiong refined Graham positivity, after the already-proved
    Lemma `lem:inversions` identifies their root cone with the manuscript's
    variables `t_i-y_j`.
 -/
 axiom gao_xiong_refined_graham_positive :
-    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+    ∀ (n : Nat) (Z : Cycle) (w : Perm),
       0 < n →
-        CoeffPositive (IncidenceCycleCoeff n u v w d)
+        EffectiveBminusTauInvariant n Z →
+          CoeffPositive (SchubertCoeffOfCycle Z w)
 
 /- Manuscript Proposition `prop:refined`, coefficient form. -/
 theorem refined_graham_incidence_positive :
     ∀ (n : Nat) (u v w : Perm) (d : Degree),
       0 < n →
         CoeffPositive (IncidenceCycleCoeff n u v w d) := by
-  exact gao_xiong_refined_graham_positive
+  intro n u v w d hn
+  rw [incidence_cycle_coefficient_def n u v w d]
+  apply gao_xiong_refined_graham_positive
+  · exact hn
+  · exact incidence_cycle_effective_invariant n u v d hn
 
 /- Proposition `prop:twisted-positive`, now proved from the two preceding
    manuscript-level interfaces.
