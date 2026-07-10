@@ -78,6 +78,11 @@ theorem w_in_comparisonBound (u v w : Perm) (data : StableExpansionData u v) :
   unfold PermInRank comparisonBound
   omega
 
+theorem qBound_le_comparisonBound (u v w : Perm) (data : StableExpansionData u v) :
+    data.qBound ≤ comparisonBound u v w data := by
+  unfold comparisonBound
+  omega
+
 theorem support_in_comparisonBound {u v w z : Perm}
     (data : StableExpansionData u v)
     (hz : z ∈ data.support) :

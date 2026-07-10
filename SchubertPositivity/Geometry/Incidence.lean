@@ -14,8 +14,17 @@ namespace SchubertPositivity
 
 opaque StableMapSpace : Nat → Degree → Scheme
 opaque FlagVariety : Nat → Scheme
-opaque FlagProduct : Nat → Scheme
-opaque IncidenceCondition : Nat → Perm → Perm → Scheme
+def FlagProduct (n : Nat) : Scheme :=
+  productScheme (FlagVariety n) (FlagVariety n)
+
+opaque incidenceP : Nat → Perm → WeylElement
+opaque incidenceQ : Nat → Perm → WeylElement
+
+def IncidenceCondition (n : Nat) (u v : Perm) : Scheme :=
+  productSubscheme
+    (schubertM (FlagVariety n) (incidenceP n u))
+    (oppositeSchubertM (FlagVariety n) (incidenceQ n v))
+
 opaque stableMapEv12 : (n : Nat) → (d : Degree) →
   Morphism (StableMapSpace n d) (FlagProduct n)
 
@@ -43,11 +52,30 @@ structure IncidenceProperties
   locallyIrreducible : IsLocallyIrreducible (IncidenceScheme n u v d)
   pureCodim : ∃ c : Nat, IsPureCodimension (IncidenceScheme n u v d) c
 
+axiom stableMapEv12_equivariant :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
+
 /- Manuscript Theorem `thm:incidence`, geometric-property part. -/
-axiom incidence_theorem_properties :
+theorem incidence_theorem_properties :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        IncidenceProperties n u v d
+        IncidenceProperties n u v d := by
+  intro n u v d _hn
+  have hfw := fw_mihalcea_preimage
+    (StableMapSpace n d)
+    (FlagVariety n)
+    (IncidenceGroup n)
+    (stableMapEv12 n d)
+    (incidenceP n u)
+    (incidenceQ n v)
+    (kontsevich_moduli_irreducible (StableMapSpace n d))
+    (stableMapEv12_equivariant n d)
+  constructor
+  · exact hfw.reduced
+  · exact hfw.locallyIrreducible
+  · exact ⟨codimSchubertM (incidenceP n u) + weylLength (incidenceQ n v),
+      hfw.pureCodim⟩
 
 theorem incidenceSchemeReduced
     (n : Nat) (u v : Perm) (d : Degree) (hn : 0 < n) :
@@ -67,10 +95,6 @@ axiom incidenceConditionInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v)
-
-axiom stableMapEv12_equivariant :
-    ∀ (n : Nat) (d : Degree),
-      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
 
 theorem incidenceSchemeInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
