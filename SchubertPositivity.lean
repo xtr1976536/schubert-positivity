@@ -1,5 +1,6 @@
 import SchubertPositivity.Permutations
 import SchubertPositivity.PositivePolynomials
+import SchubertPositivity.PositiveFiniteSupport
 import SchubertPositivity.Geometry.Basic
 import SchubertPositivity.Geometry.ExternalFacts
 import SchubertPositivity.ExternalTheorems
