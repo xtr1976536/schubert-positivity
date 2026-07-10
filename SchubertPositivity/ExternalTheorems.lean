@@ -1,4 +1,5 @@
 import Std
+import SchubertPositivity.PositivePolynomials
 
 /-!
 Interfaces for external geometric results used by the manuscript.
@@ -12,8 +13,9 @@ namespace SchubertPositivity
 
 opaque Perm : Type
 opaque Degree : Type
-opaque Coeff : Type
 opaque Cycle : Type
+
+abbrev Coeff : Type := RawPoly
 
 abbrev QuantumPoly : Type := Degree → Coeff
 
@@ -28,7 +30,7 @@ def IncidenceCycleCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
 
-opaque CoeffPositive : Coeff → Prop
+def CoeffPositive : Coeff → Prop := RawPoly.Positive
 opaque EffectiveCycle : Cycle → Prop
 opaque BminusTauInvariantCycle : Nat → Cycle → Prop
 
