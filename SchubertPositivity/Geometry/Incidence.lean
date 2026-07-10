@@ -23,11 +23,22 @@ def IncidenceCycleGeom (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
 
 opaque IncidenceGroup : Nat → Group
 
-/- Reducedness part supplied by the incidence theorem. -/
-axiom incidenceSchemeReduced :
+structure IncidenceProperties
+    (n : Nat) (u v : Perm) (d : Degree) : Prop where
+  reduced : IsReduced (IncidenceScheme n u v d)
+  locallyIrreducible : IsLocallyIrreducible (IncidenceScheme n u v d)
+  pureCodim : ∃ c : Nat, IsPureCodimension (IncidenceScheme n u v d) c
+
+/- Manuscript Theorem `thm:incidence`, geometric-property part. -/
+axiom incidence_theorem_properties :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        IsReduced (IncidenceScheme n u v d)
+        IncidenceProperties n u v d
+
+theorem incidenceSchemeReduced
+    (n : Nat) (u v : Perm) (d : Degree) (hn : 0 < n) :
+    IsReduced (IncidenceScheme n u v d) :=
+  (incidence_theorem_properties n u v d hn).reduced
 
 theorem incidenceFundamentalCycleEffective :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
