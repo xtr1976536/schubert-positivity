@@ -26,6 +26,8 @@ structure StableExpansionData (u v : Perm) where
   qBound : Nat
   coeff : Perm → QuantumPoly
   support_complete : ∀ z : Perm, coeff z ≠ (fun _ => RawPoly.zero) → z ∈ support
+  coeff_qBound : ∀ z : Perm, quantumVariableBound (coeff z) ≤ qBound
+  coeff_qBound : ∀ z : Perm, quantumVariableBound (coeff z) ≤ qBound
 
 def listNatMax : List Nat → Nat
   | [] => 0
