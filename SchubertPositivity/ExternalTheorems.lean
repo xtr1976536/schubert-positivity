@@ -19,9 +19,11 @@ abbrev QuantumPoly : Type := Degree → Coeff
 
 opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
-opaque IncidenceCycleCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
 opaque IncidenceCycle : Nat → Perm → Perm → Degree → Cycle
 opaque SchubertCoeffOfCycle : Cycle → Perm → Coeff
+
+def IncidenceCycleCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
+  SchubertCoeffOfCycle (IncidenceCycle n u v d) w
 
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
@@ -74,14 +76,6 @@ theorem incidence_expression_coefficient :
       TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d := by
   exact mihalcea_projection_duality_coefficient
 
-/- Definition-level compatibility between the coefficient notation used for the
-   incidence cycle and the abstract cycle coefficient.
--/
-axiom incidence_cycle_coefficient_def :
-    ∀ (n : Nat) (u v w : Perm) (d : Degree),
-      IncidenceCycleCoeff n u v w d =
-        SchubertCoeffOfCycle (IncidenceCycle n u v d) w
-
 /- Manuscript Proposition `prop:invariance`, recorded at the cycle-property
    level.  Its proof uses equivariance of evaluation maps, stability of
    `tau X_u` and `X_v`, connectedness of `B^-(tau)`, and proper pushforward
@@ -108,7 +102,7 @@ theorem refined_graham_incidence_positive :
       0 < n →
         CoeffPositive (IncidenceCycleCoeff n u v w d) := by
   intro n u v w d hn
-  rw [incidence_cycle_coefficient_def n u v w d]
+  unfold IncidenceCycleCoeff
   apply gao_xiong_refined_graham_positive
   · exact hn
   · exact incidence_cycle_effective_invariant n u v d hn

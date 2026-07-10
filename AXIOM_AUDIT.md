@@ -56,23 +56,6 @@ Reason not formalized yet:
 - Requires equivariant Chow/cohomology rings, Gysin maps, projection formula,
   and cycle-theoretic pushforward compatibility.
 
-### `incidence_cycle_coefficient_def`
-
-Manuscript label:
-
-- Not a separate mathematical theorem; this is notation compatibility for
-  Proposition `prop:refined`.
-
-Role:
-
-- Identifies the coefficient notation `IncidenceCycleCoeff` with the coefficient
-  of the abstract cycle `IncidenceCycle` in the opposite Schubert basis.
-
-Reason not formalized yet:
-
-- The project has not yet formalized equivariant cycle classes or Schubert-basis
-  expansions as concrete algebraic data.
-
 ### `incidence_cycle_effective_invariant`
 
 Manuscript label:
@@ -119,8 +102,8 @@ Reason not formalized yet:
 
 ## Non-axiom opaque declarations
 
-The declarations `Perm`, `Degree`, `Coeff`, `StableCoeff`, `TwistedGWCoeff`,
-`IncidenceCycleCoeff`, and `CoeffPositive` are abstract carriers and operations.
-They are placeholders for the mathematical objects of the manuscript.  They are
-not proof assumptions by themselves; the proof assumptions are exactly the
-axioms listed above.
+The declarations `Perm`, `Degree`, `Coeff`, `Cycle`, `StableCoeff`,
+`TwistedGWCoeff`, `IncidenceCycle`, `SchubertCoeffOfCycle`, and `CoeffPositive`
+are abstract carriers and operations.  They are placeholders for the
+mathematical objects of the manuscript.  They are not proof assumptions by
+themselves; the proof assumptions are exactly the axioms listed above.
