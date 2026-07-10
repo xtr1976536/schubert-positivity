@@ -1,2 +1,3 @@
 import SchubertPositivity.Permutations
-
+import SchubertPositivity.ExternalTheorems
+import SchubertPositivity.MainTheorem
