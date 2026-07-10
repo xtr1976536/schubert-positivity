@@ -22,10 +22,19 @@ def IncidenceCycleGeom (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
 
 opaque IncidenceGroup : Nat → Group
 
-axiom incidenceFundamentalCycleEffective :
+/- Reducedness part supplied by the incidence theorem. -/
+axiom incidenceSchemeReduced :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        EffectiveCycle (fundamentalCycle (IncidenceScheme n u v d))
+        IsReduced (IncidenceScheme n u v d)
+
+theorem incidenceFundamentalCycleEffective :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        EffectiveCycle (fundamentalCycle (IncidenceScheme n u v d)) := by
+  intro n u v d hn
+  apply fundamental_cycle_effective_of_reduced
+  exact incidenceSchemeReduced n u v d hn
 
 axiom incidenceFundamentalCycleInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
