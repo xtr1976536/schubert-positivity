@@ -9,6 +9,8 @@ namespace StableComparison
 
 opaque stableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque finiteTwistedCoeff : Nat → Perm → Perm → Perm → QuantumPoly
+opaque specializedStableCoeff : Nat → Perm → Perm → Perm → QuantumPoly
+opaque finiteProductCoeff : Nat → Perm → Perm → Perm → QuantumPoly
 
 /- Lam--Shimozono finite support / triangularity input. -/
 axiom LS_product_expansion_data :
@@ -20,16 +22,59 @@ axiom LS_expansion_coeff_eq :
     ∀ (u v z : Perm),
       (LS_product_expansion_data u v).coeff z = stableCoeff u v z
 
-/- Finite specialization plus Kim-basis uniqueness: once the rank bounds all
-objects and quantum variables, the finite twisted coefficient agrees with the
-stable coefficient. -/
-axiom Kim_finite_comparison_at_bound :
+/- Finite specialization does not change bounded stable coefficients.  This is
+the part of Proposition `prop:stable-finite` where `sp_N^{qa}` kills no
+appearing `x`, `a`, or `q` variable. -/
+axiom finite_specialization_preserves_bounded_terms :
     ∀ (N : Nat) (u v w : Perm) (data : StableExpansionData u v),
       0 < N →
       PermInRank N u →
       PermInRank N v →
       PermInRank N w →
+      data.qBound ≤ N →
+        stableCoeff u v w = specializedStableCoeff N u v w
+
+/- Lam--Shimozono stability identifies the specialized stable product with the
+finite product in the Kim quotient at the same rank. -/
+axiom stable_product_specializes_to_finite_product :
+    ∀ (N : Nat) (u v w : Perm) (data : StableExpansionData u v),
+      0 < N →
+      PermInRank N u →
+      PermInRank N v →
+      PermInRank N w →
+      data.qBound ≤ N →
+        specializedStableCoeff N u v w = finiteProductCoeff N u v w
+
+/- Kim's quantum Schubert classes form a basis, so two finite quotient
+expansions with the same product have identical coefficients. -/
+axiom kim_basis_unique_coefficients :
+    ∀ (N : Nat) (u v w : Perm),
+      0 < N →
+      PermInRank N u →
+      PermInRank N v →
+      PermInRank N w →
+        finiteProductCoeff N u v w = finiteTwistedCoeff N u v w
+
+/- The former one-step finite comparison is now an internal theorem obtained by
+chaining finite specialization, product identification, and Kim-basis
+uniqueness. -/
+theorem Kim_finite_comparison_at_bound :
+    ∀ (N : Nat) (u v w : Perm) (data : StableExpansionData u v),
+      0 < N →
+      PermInRank N u →
+      PermInRank N v →
+      PermInRank N w →
+      data.qBound ≤ N →
         stableCoeff u v w = finiteTwistedCoeff N u v w
+    := by
+  intro N u v w data hN hu hv hw hq
+  calc
+    stableCoeff u v w = specializedStableCoeff N u v w :=
+      finite_specialization_preserves_bounded_terms N u v w data hN hu hv hw hq
+    _ = finiteProductCoeff N u v w :=
+      stable_product_specializes_to_finite_product N u v w data hN hu hv hw hq
+    _ = finiteTwistedCoeff N u v w :=
+      kim_basis_unique_coefficients N u v w hN hu hv hw
 
 theorem stable_finite_comparison_from_interfaces :
     ∀ u v w : Perm,
@@ -44,6 +89,7 @@ theorem stable_finite_comparison_from_interfaces :
   · exact u_in_comparisonBound u v w data
   · exact v_in_comparisonBound u v w data
   · exact w_in_comparisonBound u v w data
+  · exact qBound_le_comparisonBound u v w data
 
 end StableComparison
 end SchubertPositivity
