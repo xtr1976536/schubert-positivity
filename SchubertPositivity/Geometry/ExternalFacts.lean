@@ -74,6 +74,16 @@ axiom equivariant_comp :
       IsEquivariant G g →
         IsEquivariant G (morphismComp f g)
 
+/- If the action of `H` is obtained by restricting the action of `G`, then
+`G`-equivariance implies `H`-equivariance. -/
+opaque IsRestrictedAction : Group → Group → Prop
+
+axiom equivariant_of_restricted_action :
+    ∀ {X Y : Scheme} (H G : Group) (f : Morphism X Y),
+      IsRestrictedAction H G →
+      IsEquivariant G f →
+        IsEquivariant H f
+
 /- Equivariant preimages of invariant schemes are invariant. -/
 axiom invariant_preimage_of_equivariant :
     ∀ {X Y : Scheme} (G : Group) (f : Morphism X Y) (Z : Scheme),

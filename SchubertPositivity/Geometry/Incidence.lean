@@ -23,10 +23,16 @@ def FlagProduct (n : Nat) : Scheme :=
 opaque incidenceP : Nat → Perm → WeylElement
 opaque incidenceQ : Nat → Perm → WeylElement
 
+def TauTranslatedSchubert (n : Nat) (u : Perm) : Scheme :=
+  schubertM (FlagVariety n) (incidenceP n u)
+
+def IncidenceOppositeSchubert (n : Nat) (v : Perm) : Scheme :=
+  oppositeSchubertM (FlagVariety n) (incidenceQ n v)
+
 def IncidenceCondition (n : Nat) (u v : Perm) : Scheme :=
   productSubscheme
-    (schubertM (FlagVariety n) (incidenceP n u))
-    (oppositeSchubertM (FlagVariety n) (incidenceQ n v))
+    (TauTranslatedSchubert n u)
+    (IncidenceOppositeSchubert n v)
 
 opaque stableMapEv12 : (n : Nat) → (d : Degree) →
   Morphism (StableMapSpace n d) (FlagProduct n)
@@ -45,15 +51,9 @@ axiom stableMapPostCompositionEv3_equivariant :
     ∀ (n : Nat) (d : Degree),
       IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv3 n d)
 
-axiom incidenceGroup_from_postComposition_ev12 :
+axiom stableMapPostComposition_restricts_to_incidenceGroup :
     ∀ (n : Nat) (d : Degree),
-      IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv12 n d) →
-        IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
-
-axiom incidenceGroup_from_postComposition_ev3 :
-    ∀ (n : Nat) (d : Degree),
-      IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv3 n d) →
-        IsEquivariant (IncidenceGroup n) (stableMapEv3 n d)
+      IsRestrictedAction (IncidenceGroup n) (StableMapPostCompositionAction n d)
 
 def IncidenceScheme (n : Nat) (u v : Perm) (d : Degree) : Scheme :=
   schemePreimage (stableMapEv12 n d) (IncidenceCondition n u v)
@@ -79,8 +79,9 @@ theorem stableMapEv12_equivariant :
     ∀ (n : Nat) (d : Degree),
       IsEquivariant (IncidenceGroup n) (stableMapEv12 n d) := by
   intro n d
-  apply incidenceGroup_from_postComposition_ev12
-  exact stableMapPostCompositionEv12_equivariant n d
+  apply equivariant_of_restricted_action
+  · exact stableMapPostComposition_restricts_to_incidenceGroup n d
+  · exact stableMapPostCompositionEv12_equivariant n d
 
 /- Manuscript Theorem `thm:incidence`, geometric-property part. -/
 theorem incidence_theorem_properties :
@@ -116,21 +117,35 @@ theorem incidenceFundamentalCycleEffective :
   apply fundamental_cycle_effective_of_reduced
   exact incidenceSchemeReduced n u v d hn
 
-/- Stability of the Schubert factors under the relevant group. -/
-axiom translatedSchubertStable :
+/- Stability of the Schubert factors, matching the manuscript's proof:
+`tau X_u` is stable and `X_v` is stable under `B^-(tau)`.
+-/
+axiom tauXuStable :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        InvariantScheme (IncidenceGroup n)
-          (schubertM (FlagVariety n) (incidenceP n u))
+        InvariantScheme (IncidenceGroup n) (TauTranslatedSchubert n u)
 
-axiom oppositeSchubertStable :
+axiom xvStable :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        InvariantScheme (IncidenceGroup n)
-          (oppositeSchubertM (FlagVariety n) (incidenceQ n v))
+        InvariantScheme (IncidenceGroup n) (IncidenceOppositeSchubert n v)
+
+theorem translatedSchubertStable :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (TauTranslatedSchubert n u) := by
+  intro n u v d hn
+  exact tauXuStable n u v d hn
+
+theorem oppositeSchubertStable :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (IncidenceOppositeSchubert n v) := by
+  intro n u v d hn
+  exact xvStable n u v d hn
 
 /- Stability of the incidence condition under the relevant group. -/
-theorem incidenceConditionInvariant :
+theorem incidenceConditionProductInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v) := by
@@ -139,6 +154,12 @@ theorem incidenceConditionInvariant :
   apply product_subscheme_invariant
   · exact translatedSchubertStable n u v d hn
   · exact oppositeSchubertStable n u v d hn
+
+theorem incidenceConditionInvariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v) := by
+  exact incidenceConditionProductInvariant
 
 theorem incidenceSchemeInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
@@ -171,8 +192,9 @@ theorem stableMapEv3_equivariant :
     ∀ (n : Nat) (d : Degree),
       IsEquivariant (IncidenceGroup n) (stableMapEv3 n d) := by
   intro n d
-  apply incidenceGroup_from_postComposition_ev3
-  exact stableMapPostCompositionEv3_equivariant n d
+  apply equivariant_of_restricted_action
+  · exact stableMapPostComposition_restricts_to_incidenceGroup n d
+  · exact stableMapPostCompositionEv3_equivariant n d
 
 theorem ev3_equivariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
