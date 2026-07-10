@@ -18,6 +18,7 @@ abbrev QuantumPoly : Type := Degree → Coeff
 
 opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
+opaque IncidenceCycleCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
 
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
@@ -46,13 +47,31 @@ theorem coefficient_gw_preserves_positivity :
   intro n u v w h d
   exact h d
 
-/- Proposition `prop:twisted-positive`.
-   Source input: incidence-cycle expression, invariance/effectivity, refined
-   Graham positivity, and equivariant Schubert duality.
+/- Proposition `prop:incidence-expression` plus Fact `fact:duality`, used in
+   coefficient form.
 -/
-axiom twisted_gw_positive :
+axiom incidence_expression_coefficient :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d
+
+/- Proposition `prop:refined`, after applying Lemma `lem:inversions` to identify
+   Gao--Xiong's ring with the manuscript's positive cone.
+   External input inside this interface: Gao--Xiong refined Graham positivity.
+-/
+axiom refined_graham_incidence_positive :
     ∀ (n : Nat) (u v w : Perm) (d : Degree),
       0 < n →
-        CoeffPositive (TwistedGWCoeff n u v w d)
+        CoeffPositive (IncidenceCycleCoeff n u v w d)
+
+/- Proposition `prop:twisted-positive`, now proved from the two preceding
+   manuscript-level interfaces.
+-/
+theorem twisted_gw_positive :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      0 < n →
+        CoeffPositive (TwistedGWCoeff n u v w d) := by
+  intro n u v w d hn
+  rw [incidence_expression_coefficient n u v w d]
+  exact refined_graham_incidence_positive n u v w d hn
 
 end SchubertPositivity
