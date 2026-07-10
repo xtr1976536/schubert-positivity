@@ -32,6 +32,12 @@ def IncidenceCycle (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
 def IncidenceCycleCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
   schubertCoefficient (IncidenceCycle n u v d) (permAsWeyl n w)
 
+def IncidencePoincareCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
+  poincarePairingCoeff
+    (FlagVariety n)
+    (IncidenceCycle n u v d)
+    (permAsWeyl n w)
+
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   StableComparison.finiteTwistedCoeff n u v w
 
@@ -77,9 +83,23 @@ theorem coefficient_gw_preserves_positivity :
    equivariant pushforward compatibility for cycles, and equivariant Poincare
    duality, all translated to the coefficient form used below.
 -/
-axiom mihalcea_projection_duality_coefficient :
+axiom mihalcea_projection_formula_coefficient :
     ∀ (n : Nat) (u v w : Perm) (d : Degree),
-      TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d
+      TwistedGWCoeff n u v w d = IncidencePoincareCoeff n u v w d
+
+axiom equivariant_poincare_duality_coefficient :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      IncidencePoincareCoeff n u v w d = IncidenceCycleCoeff n u v w d
+
+theorem mihalcea_projection_duality_coefficient :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d := by
+  intro n u v w d
+  calc
+    TwistedGWCoeff n u v w d = IncidencePoincareCoeff n u v w d :=
+      mihalcea_projection_formula_coefficient n u v w d
+    _ = IncidenceCycleCoeff n u v w d :=
+      equivariant_poincare_duality_coefficient n u v w d
 
 /- Manuscript Proposition `prop:incidence-expression`, coefficient form. -/
 theorem incidence_expression_coefficient :

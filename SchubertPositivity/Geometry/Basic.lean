@@ -50,5 +50,6 @@ opaque cycleIntersect : Cycle → Cycle → Cycle
 opaque schubertCycle : Scheme → WeylElement → Cycle
 opaque oppositeSchubertCycle : Scheme → WeylElement → Cycle
 opaque schubertCoefficient : Cycle → WeylElement → RawPoly
+opaque poincarePairingCoeff : Scheme → Cycle → WeylElement → RawPoly
 
 end SchubertPositivity
