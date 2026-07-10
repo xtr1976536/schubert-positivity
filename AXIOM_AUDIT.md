@@ -56,7 +56,7 @@ Reason not formalized yet:
 - Requires equivariant Chow/cohomology rings, Gysin maps, projection formula,
   and cycle-theoretic pushforward compatibility.
 
-### `incidence_cycle_effective_invariant`
+### `incidence_cycle_effective`
 
 Manuscript label:
 
@@ -64,14 +64,29 @@ Manuscript label:
 
 Role:
 
-- States that the incidence pushforward cycle is effective and
-  `B^-(tau)`-invariant.
+- States that the incidence pushforward cycle is effective.
+
+Reason not formalized yet:
+
+- Requires formalizing the reduced incidence scheme from Theorem
+  `thm:incidence`, fundamental cycles, and proper pushforward preserving
+  effectivity.
+
+### `incidence_cycle_bminus_tau_invariant`
+
+Manuscript label:
+
+- Proposition `prop:invariance`.
+
+Role:
+
+- States that the incidence pushforward cycle is `B^-(tau)`-invariant.
 
 Reason not formalized yet:
 
 - Requires formalizing group actions on stable-map spaces, equivariance of
-  evaluation maps, connectedness arguments for irreducible components, and
-  proper cycle pushforward.
+  evaluation maps, stability of `tau X_u` and `X_v`, connectedness of
+  `B^-(tau)`, and the induced action on irreducible components.
 
 ### `gao_xiong_refined_graham_positive`
 

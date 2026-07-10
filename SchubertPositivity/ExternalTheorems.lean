@@ -29,7 +29,11 @@ def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
 
 opaque CoeffPositive : Coeff → Prop
-opaque EffectiveBminusTauInvariant : Nat → Cycle → Prop
+opaque EffectiveCycle : Cycle → Prop
+opaque BminusTauInvariantCycle : Nat → Cycle → Prop
+
+def EffectiveBminusTauInvariant (n : Nat) (Z : Cycle) : Prop :=
+  EffectiveCycle Z ∧ BminusTauInvariantCycle n Z
 
 def InPositiveCone (P : QuantumPoly) : Prop :=
   ∀ d : Degree, CoeffPositive (P d)
@@ -76,15 +80,33 @@ theorem incidence_expression_coefficient :
       TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d := by
   exact mihalcea_projection_duality_coefficient
 
-/- Manuscript Proposition `prop:invariance`, recorded at the cycle-property
-   level.  Its proof uses equivariance of evaluation maps, stability of
-   `tau X_u` and `X_v`, connectedness of `B^-(tau)`, and proper pushforward
-   preserving effectivity.
+/- Effectivity part of manuscript Proposition `prop:invariance`.
+   Geometric inputs: reduced incidence scheme from Theorem `thm:incidence` and
+   proper pushforward preserving effective cycles.
 -/
-axiom incidence_cycle_effective_invariant :
+axiom incidence_cycle_effective :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        EffectiveBminusTauInvariant n (IncidenceCycle n u v d)
+        EffectiveCycle (IncidenceCycle n u v d)
+
+/- Invariance part of manuscript Proposition `prop:invariance`.
+   Geometric inputs: equivariance of the evaluation maps, stability of
+   `tau X_u` and `X_v`, and connectedness of `B^-(tau)`.
+-/
+axiom incidence_cycle_bminus_tau_invariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        BminusTauInvariantCycle n (IncidenceCycle n u v d)
+
+/- Manuscript Proposition `prop:invariance`, assembled from its two parts. -/
+theorem incidence_cycle_effective_invariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        EffectiveBminusTauInvariant n (IncidenceCycle n u v d) := by
+  intro n u v d hn
+  constructor
+  · exact incidence_cycle_effective n u v d hn
+  · exact incidence_cycle_bminus_tau_invariant n u v d hn
 
 /- External Gao--Xiong refined Graham positivity, after the already-proved
    Lemma `lem:inversions` identifies their root cone with the manuscript's
