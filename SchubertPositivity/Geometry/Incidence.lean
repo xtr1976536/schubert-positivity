@@ -13,9 +13,10 @@ proper pushforward of the incidence fundamental cycle along `ev₃`.
 namespace SchubertPositivity
 
 opaque StableMapSpace : Nat → Degree → Scheme
+opaque FlagVariety : Nat → Scheme
 opaque IncidenceScheme : Nat → Perm → Perm → Degree → Scheme
 opaque ev3 : (n : Nat) → (u v : Perm) → (d : Degree) →
-  Morphism (IncidenceScheme n u v d) (StableMapSpace n d)
+  Morphism (IncidenceScheme n u v d) (FlagVariety n)
 
 def IncidenceCycleGeom (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
   cyclePushforward (ev3 n u v d) (fundamentalCycle (IncidenceScheme n u v d))
