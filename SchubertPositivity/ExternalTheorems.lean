@@ -1,4 +1,5 @@
 import Std
+import SchubertPositivity.Core
 import SchubertPositivity.PositivePolynomials
 import SchubertPositivity.Geometry.Basic
 
@@ -11,9 +12,6 @@ while keeping deep external geometric theorems as sharply named interfaces.
 -/
 
 namespace SchubertPositivity
-
-opaque Perm : Type
-opaque Degree : Type
 
 abbrev Coeff : Type := RawPoly
 

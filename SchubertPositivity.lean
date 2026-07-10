@@ -1,7 +1,9 @@
+import SchubertPositivity.Core
 import SchubertPositivity.Permutations
 import SchubertPositivity.PositivePolynomials
 import SchubertPositivity.PositiveFiniteSupport
 import SchubertPositivity.Geometry.Basic
 import SchubertPositivity.Geometry.ExternalFacts
+import SchubertPositivity.Geometry.Incidence
 import SchubertPositivity.ExternalTheorems
 import SchubertPositivity.MainTheorem
