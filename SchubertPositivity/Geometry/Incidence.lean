@@ -22,18 +22,18 @@ def IncidenceCycleGeom (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
 
 opaque IncidenceGroup : Nat → Group
 
-opaque incidenceFundamentalCycleEffective :
+axiom incidenceFundamentalCycleEffective :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         EffectiveCycle (fundamentalCycle (IncidenceScheme n u v d))
 
-opaque incidenceFundamentalCycleInvariant :
+axiom incidenceFundamentalCycleInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         InvariantCycle (IncidenceGroup n)
           (fundamentalCycle (IncidenceScheme n u v d))
 
-opaque ev3_equivariant :
+axiom ev3_equivariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       IsEquivariant (IncidenceGroup n) (ev3 n u v d)
 

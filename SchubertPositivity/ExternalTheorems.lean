@@ -2,6 +2,7 @@ import Std
 import SchubertPositivity.Core
 import SchubertPositivity.PositivePolynomials
 import SchubertPositivity.Geometry.Basic
+import SchubertPositivity.Geometry.Incidence
 
 /-!
 Interfaces for external geometric results used by the manuscript.
@@ -19,8 +20,10 @@ abbrev QuantumPoly : Type := Degree → Coeff
 
 opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
-opaque IncidenceCycle : Nat → Perm → Perm → Degree → Cycle
 opaque SchubertCoeffOfCycle : Cycle → Perm → Coeff
+
+def IncidenceCycle (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
+  IncidenceCycleGeom n u v d
 
 def IncidenceCycleCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
   SchubertCoeffOfCycle (IncidenceCycle n u v d) w
@@ -29,7 +32,7 @@ def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
 
 def CoeffPositive : Coeff → Prop := RawPoly.Positive
-opaque BminusTauGroup : Nat → Group
+def BminusTauGroup : Nat → Group := IncidenceGroup
 
 def EffectiveBminusTauInvariant (n : Nat) (Z : Cycle) : Prop :=
   EffectiveCycle Z ∧ InvariantCycle (BminusTauGroup n) Z
@@ -83,19 +86,23 @@ theorem incidence_expression_coefficient :
    Geometric inputs: reduced incidence scheme from Theorem `thm:incidence` and
    proper pushforward preserving effective cycles.
 -/
-axiom incidence_cycle_effective :
+theorem incidence_cycle_effective :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        EffectiveCycle (IncidenceCycle n u v d)
+        EffectiveCycle (IncidenceCycle n u v d) := by
+  intro n u v d hn
+  exact incidenceCycleGeom_effective n u v d hn
 
 /- Invariance part of manuscript Proposition `prop:invariance`.
    Geometric inputs: equivariance of the evaluation maps, stability of
    `tau X_u` and `X_v`, and connectedness of `B^-(tau)`.
 -/
-axiom incidence_cycle_bminus_tau_invariant :
+theorem incidence_cycle_bminus_tau_invariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        InvariantCycle (BminusTauGroup n) (IncidenceCycle n u v d)
+        InvariantCycle (BminusTauGroup n) (IncidenceCycle n u v d) := by
+  intro n u v d hn
+  exact incidenceCycleGeom_invariant n u v d hn
 
 /- Manuscript Proposition `prop:invariance`, assembled from its two parts. -/
 theorem incidence_cycle_effective_invariant :
