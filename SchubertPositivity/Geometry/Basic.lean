@@ -18,6 +18,13 @@ opaque Morphism : Scheme → Scheme → Type
 opaque Cycle : Type
 opaque WeylElement : Type
 
+opaque productScheme : Scheme → Scheme → Scheme
+opaque productSubscheme : Scheme → Scheme → Scheme
+opaque schubertM : Scheme → WeylElement → Scheme
+opaque oppositeSchubertM : Scheme → WeylElement → Scheme
+opaque codimSchubertM : WeylElement → Nat
+opaque weylLength : WeylElement → Nat
+
 opaque morphismComp {X Y Z : Scheme} :
   Morphism X Y → Morphism Y Z → Morphism X Z
 opaque schemePreimage {X Y : Scheme} :

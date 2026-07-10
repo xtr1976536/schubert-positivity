@@ -7,23 +7,31 @@ External geometric facts, stated at the smallest current interface boundary.
 namespace SchubertPositivity
 
 /- Fulton--Woodward--Mihalcea transversality/preimage theorem. -/
-axiom fw_mihalcea_preimage_reduced :
-    ∀ (Z X : Scheme) (G : Group) (F : Morphism Z X),
-      IsIrreducible Z →
-      IsEquivariant G F →
-        IsReduced Z
+structure FWMihalceaPreimageProperties
+    (Z X : Scheme) (G : Group)
+    (F : Morphism Z (productScheme X X))
+    (p q : WeylElement) : Prop where
+  reduced :
+    IsReduced
+      (schemePreimage F
+        (productSubscheme (schubertM X p) (oppositeSchubertM X q)))
+  locallyIrreducible :
+    IsLocallyIrreducible
+      (schemePreimage F
+        (productSubscheme (schubertM X p) (oppositeSchubertM X q)))
+  pureCodim :
+    IsPureCodimension
+      (schemePreimage F
+        (productSubscheme (schubertM X p) (oppositeSchubertM X q)))
+      (codimSchubertM p + weylLength q)
 
-axiom fw_mihalcea_preimage_locally_irreducible :
-    ∀ (Z X : Scheme) (G : Group) (F : Morphism Z X),
+axiom fw_mihalcea_preimage :
+    ∀ (Z X : Scheme) (G : Group)
+      (F : Morphism Z (productScheme X X))
+      (p q : WeylElement),
       IsIrreducible Z →
       IsEquivariant G F →
-        IsLocallyIrreducible Z
-
-axiom fw_mihalcea_preimage_expected_codim :
-    ∀ (Z X : Scheme) (G : Group) (F : Morphism Z X) (c : Nat),
-      IsIrreducible Z →
-      IsEquivariant G F →
-        IsPureCodimension Z c
+        FWMihalceaPreimageProperties Z X G F p q
 
 /- Kim--Pandharipande/Thomsen irreducibility of stable-map spaces. -/
 axiom kontsevich_moduli_irreducible :
