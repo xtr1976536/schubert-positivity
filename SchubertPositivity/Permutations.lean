@@ -65,4 +65,59 @@ theorem tau_inversion_backward (n : Nat) (hn : 0 < n)
   · simp [tau]
     split_ifs with hp' hq' <;> omega
 
+theorem tau_inversion_iff (n : Nat) (hn : 0 < n)
+    (p q : Fin (2*n)) :
+    inInversionSet (tau n) p q ↔
+      (p : Nat) < n ∧ n ≤ (q : Nat) ∧ (p : Nat) < (q : Nat) := by
+  constructor
+  · intro h
+    rcases h with ⟨hpq, hgt⟩
+    have hblock := tau_inversion_forward n hn p q ⟨hpq, hgt⟩
+    exact ⟨hblock.1, hblock.2, hpq⟩
+  · intro h
+    exact tau_inversion_backward n hn p q h.1 h.2.1 h.2.2
+
+def tauInversionRectangle (n : Nat) : List (Fin (2*n) × Fin (2*n)) :=
+  (List.finRange n).bind fun p =>
+    (List.finRange n).map fun r =>
+      (⟨(p : Nat), by
+          have hp : (p : Nat) < n := p.isLt
+          omega⟩,
+       ⟨n + (r : Nat), by
+          have hr : (r : Nat) < n := r.isLt
+          omega⟩)
+
+theorem tauInversionRectangle_length (n : Nat) :
+    (tauInversionRectangle n).length = n * n := by
+  simp [tauInversionRectangle]
+
+theorem tauInversionRectangle_mem_iff (n : Nat) (hn : 0 < n)
+    (p q : Fin (2*n)) :
+    (p, q) ∈ tauInversionRectangle n ↔ inInversionSet (tau n) p q := by
+  constructor
+  · intro h
+    simp [tauInversionRectangle] at h
+    rcases h with ⟨p0, hp0, r0, hr0, hpq⟩
+    rcases hpq with ⟨hp, hq⟩
+    subst hp
+    subst hq
+    apply tau_inversion_backward n hn
+    · exact p0.isLt
+    · omega
+    · have hp0lt : (p0 : Nat) < n := p0.isLt
+      omega
+  · intro h
+    have hiff := (tau_inversion_iff n hn p q).mp h
+    rcases hiff with ⟨hp, hq, hpq⟩
+    simp [tauInversionRectangle]
+    refine ⟨⟨(p : Nat), hp⟩, by simp, ⟨(q : Nat) - n, ?_⟩, by simp, ?_⟩
+    · have hq2 : (q : Nat) < 2*n := q.isLt
+      omega
+    · apply Prod.ext
+      · apply Fin.ext
+        simp
+      · apply Fin.ext
+        simp
+        omega
+
 end SchubertPositivity
