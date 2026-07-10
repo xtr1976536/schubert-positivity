@@ -1,5 +1,6 @@
 import Std
 import SchubertPositivity.PositivePolynomials
+import SchubertPositivity.Geometry.Basic
 
 /-!
 Interfaces for external geometric results used by the manuscript.
@@ -13,7 +14,6 @@ namespace SchubertPositivity
 
 opaque Perm : Type
 opaque Degree : Type
-opaque Cycle : Type
 
 abbrev Coeff : Type := RawPoly
 
@@ -31,11 +31,10 @@ def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
 
 def CoeffPositive : Coeff → Prop := RawPoly.Positive
-opaque EffectiveCycle : Cycle → Prop
-opaque BminusTauInvariantCycle : Nat → Cycle → Prop
+opaque BminusTauGroup : Nat → Group
 
 def EffectiveBminusTauInvariant (n : Nat) (Z : Cycle) : Prop :=
-  EffectiveCycle Z ∧ BminusTauInvariantCycle n Z
+  EffectiveCycle Z ∧ InvariantCycle (BminusTauGroup n) Z
 
 def InPositiveCone (P : QuantumPoly) : Prop :=
   ∀ d : Degree, CoeffPositive (P d)
@@ -98,7 +97,7 @@ axiom incidence_cycle_effective :
 axiom incidence_cycle_bminus_tau_invariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        BminusTauInvariantCycle n (IncidenceCycle n u v d)
+        InvariantCycle (BminusTauGroup n) (IncidenceCycle n u v d)
 
 /- Manuscript Proposition `prop:invariance`, assembled from its two parts. -/
 theorem incidence_cycle_effective_invariant :
