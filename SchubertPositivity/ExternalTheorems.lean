@@ -2,6 +2,7 @@ import Std
 import SchubertPositivity.Core
 import SchubertPositivity.PositivePolynomials
 import SchubertPositivity.Geometry.Basic
+import SchubertPositivity.Geometry.ExternalFacts
 import SchubertPositivity.Geometry.Incidence
 
 /-!
@@ -20,13 +21,13 @@ abbrev QuantumPoly : Type := Degree → Coeff
 
 opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
-opaque SchubertCoeffOfCycle : Cycle → Perm → Coeff
+opaque permAsWeyl : Nat → Perm → WeylElement
 
 def IncidenceCycle (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
   IncidenceCycleGeom n u v d
 
 def IncidenceCycleCoeff (n : Nat) (u v w : Perm) (d : Degree) : Coeff :=
-  SchubertCoeffOfCycle (IncidenceCycle n u v d) w
+  schubertCoefficient (IncidenceCycle n u v d) (permAsWeyl n w)
 
 def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
   TwistedGWCoeff n u v w
@@ -118,11 +119,14 @@ theorem incidence_cycle_effective_invariant :
    Lemma `lem:inversions` identifies their root cone with the manuscript's
    variables `t_i-y_j`.
 -/
-axiom gao_xiong_refined_graham_positive :
+theorem gao_xiong_refined_graham_positive :
     ∀ (n : Nat) (Z : Cycle) (w : Perm),
       0 < n →
         EffectiveBminusTauInvariant n Z →
-          CoeffPositive (SchubertCoeffOfCycle Z w)
+          CoeffPositive (schubertCoefficient Z (permAsWeyl n w)) := by
+  intro n Z w _hn hZ
+  exact gao_xiong_refined_graham_positive_for_cycle
+    (BminusTauGroup n) (FlagVariety n) Z (permAsWeyl n w) hZ.1 hZ.2
 
 /- Manuscript Proposition `prop:refined`, coefficient form. -/
 theorem refined_graham_incidence_positive :
