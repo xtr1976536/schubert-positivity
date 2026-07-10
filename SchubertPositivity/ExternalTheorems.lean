@@ -28,13 +28,21 @@ opaque CoeffPositive : Coeff → Prop
 def InPositiveCone (P : QuantumPoly) : Prop :=
   ∀ d : Degree, CoeffPositive (P d)
 
-/- Proposition `prop:stable-finite` in the manuscript.
-   Source input: Lam--Shimozono stability and finite support of the product.
+/- External Lam--Shimozono input behind manuscript Proposition
+   `prop:stable-finite`: stable Schubert representatives, finite-rank
+   specialization, basis uniqueness, and finite support for the coefficient.
 -/
-axiom stable_finite_comparison :
+axiom lam_shimozono_stable_finite_comparison :
     ∀ u v w : Perm,
       ∃ n : Nat, 0 < n ∧
         StableCoeff u v w = FiniteTwistedCoeff n u v w
+
+/- Manuscript Proposition `prop:stable-finite`, exposed under the paper label. -/
+theorem stable_finite_comparison :
+    ∀ u v w : Perm,
+      ∃ n : Nat, 0 < n ∧
+        StableCoeff u v w = FiniteTwistedCoeff n u v w := by
+  exact lam_shimozono_stable_finite_comparison
 
 /- Positivity extraction from Proposition `prop:coefficient-gw`.
    In the current abstraction a quantum polynomial is already represented by
@@ -47,21 +55,36 @@ theorem coefficient_gw_preserves_positivity :
   intro n u v w h d
   exact h d
 
-/- Proposition `prop:incidence-expression` plus Fact `fact:duality`, used in
-   coefficient form.
+/- External/standard intersection-theoretic input used in manuscript
+   Proposition `prop:incidence-expression`: Mihalcea's projection formula,
+   equivariant pushforward compatibility for cycles, and equivariant Poincare
+   duality, all translated to the coefficient form used below.
 -/
-axiom incidence_expression_coefficient :
+axiom mihalcea_projection_duality_coefficient :
     ∀ (n : Nat) (u v w : Perm) (d : Degree),
       TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d
 
-/- Proposition `prop:refined`, after applying Lemma `lem:inversions` to identify
-   Gao--Xiong's ring with the manuscript's positive cone.
-   External input inside this interface: Gao--Xiong refined Graham positivity.
+/- Manuscript Proposition `prop:incidence-expression`, coefficient form. -/
+theorem incidence_expression_coefficient :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      TwistedGWCoeff n u v w d = IncidenceCycleCoeff n u v w d := by
+  exact mihalcea_projection_duality_coefficient
+
+/- External Gao--Xiong refined Graham positivity, after the already-proved
+   Lemma `lem:inversions` identifies their root cone with the manuscript's
+   variables `t_i-y_j`.
 -/
-axiom refined_graham_incidence_positive :
+axiom gao_xiong_refined_graham_positive :
     ∀ (n : Nat) (u v w : Perm) (d : Degree),
       0 < n →
         CoeffPositive (IncidenceCycleCoeff n u v w d)
+
+/- Manuscript Proposition `prop:refined`, coefficient form. -/
+theorem refined_graham_incidence_positive :
+    ∀ (n : Nat) (u v w : Perm) (d : Degree),
+      0 < n →
+        CoeffPositive (IncidenceCycleCoeff n u v w d) := by
+  exact gao_xiong_refined_graham_positive
 
 /- Proposition `prop:twisted-positive`, now proved from the two preceding
    manuscript-level interfaces.
