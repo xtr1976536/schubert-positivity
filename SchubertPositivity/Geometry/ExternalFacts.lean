@@ -81,6 +81,13 @@ axiom invariant_preimage_of_equivariant :
       InvariantScheme G Z →
         InvariantScheme G (schemePreimage f Z)
 
+/- Products of invariant subschemes are invariant for the diagonal action. -/
+axiom product_subscheme_invariant :
+    ∀ (G : Group) (X Y : Scheme),
+      InvariantScheme G X →
+      InvariantScheme G Y →
+        InvariantScheme G (productSubscheme X Y)
+
 /- The inclusion of an equivariant preimage is equivariant. -/
 axiom preimage_inclusion_equivariant :
     ∀ {X Y : Scheme} (G : Group) (f : Morphism X Y) (Z : Scheme),

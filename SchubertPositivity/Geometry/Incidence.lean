@@ -14,6 +14,9 @@ namespace SchubertPositivity
 
 opaque StableMapSpace : Nat → Degree → Scheme
 opaque FlagVariety : Nat → Scheme
+opaque IncidenceGroup : Nat → Group
+opaque StableMapPostCompositionAction : Nat → Degree → Group
+
 def FlagProduct (n : Nat) : Scheme :=
   productScheme (FlagVariety n) (FlagVariety n)
 
@@ -27,6 +30,30 @@ def IncidenceCondition (n : Nat) (u v : Perm) : Scheme :=
 
 opaque stableMapEv12 : (n : Nat) → (d : Degree) →
   Morphism (StableMapSpace n d) (FlagProduct n)
+opaque stableMapEv3 : (n : Nat) → (d : Degree) →
+  Morphism (StableMapSpace n d) (FlagVariety n)
+
+/- Evaluation maps are equivariant for the post-composition action on stable
+maps.  These are the standard stable-map action inputs replacing the former
+direct evaluation-map interfaces.
+-/
+axiom stableMapPostCompositionEv12_equivariant :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv12 n d)
+
+axiom stableMapPostCompositionEv3_equivariant :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv3 n d)
+
+axiom incidenceGroup_from_postComposition_ev12 :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv12 n d) →
+        IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
+
+axiom incidenceGroup_from_postComposition_ev3 :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (StableMapPostCompositionAction n d) (stableMapEv3 n d) →
+        IsEquivariant (IncidenceGroup n) (stableMapEv3 n d)
 
 def IncidenceScheme (n : Nat) (u v : Perm) (d : Degree) : Scheme :=
   schemePreimage (stableMapEv12 n d) (IncidenceCondition n u v)
@@ -34,8 +61,6 @@ def IncidenceScheme (n : Nat) (u v : Perm) (d : Degree) : Scheme :=
 def incidenceInclusion (n : Nat) (u v : Perm) (d : Degree) :
   Morphism (IncidenceScheme n u v d) (StableMapSpace n d)
   := preimageInclusion (stableMapEv12 n d) (IncidenceCondition n u v)
-opaque stableMapEv3 : (n : Nat) → (d : Degree) →
-  Morphism (StableMapSpace n d) (FlagVariety n)
 
 def ev3 (n : Nat) (u v : Perm) (d : Degree) :
   Morphism (IncidenceScheme n u v d) (FlagVariety n)
@@ -44,17 +69,18 @@ def ev3 (n : Nat) (u v : Perm) (d : Degree) :
 def IncidenceCycleGeom (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
   cyclePushforward (ev3 n u v d) (fundamentalCycle (IncidenceScheme n u v d))
 
-opaque IncidenceGroup : Nat → Group
-
 structure IncidenceProperties
     (n : Nat) (u v : Perm) (d : Degree) : Prop where
   reduced : IsReduced (IncidenceScheme n u v d)
   locallyIrreducible : IsLocallyIrreducible (IncidenceScheme n u v d)
   pureCodim : ∃ c : Nat, IsPureCodimension (IncidenceScheme n u v d) c
 
-axiom stableMapEv12_equivariant :
+theorem stableMapEv12_equivariant :
     ∀ (n : Nat) (d : Degree),
-      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
+      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d) := by
+  intro n d
+  apply incidenceGroup_from_postComposition_ev12
+  exact stableMapPostCompositionEv12_equivariant n d
 
 /- Manuscript Theorem `thm:incidence`, geometric-property part. -/
 theorem incidence_theorem_properties :
@@ -90,11 +116,29 @@ theorem incidenceFundamentalCycleEffective :
   apply fundamental_cycle_effective_of_reduced
   exact incidenceSchemeReduced n u v d hn
 
-/- Stability of the incidence scheme under the relevant group. -/
-axiom incidenceConditionInvariant :
+/- Stability of the Schubert factors under the relevant group. -/
+axiom translatedSchubertStable :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v)
+        InvariantScheme (IncidenceGroup n)
+          (schubertM (FlagVariety n) (incidenceP n u))
+
+axiom oppositeSchubertStable :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n)
+          (oppositeSchubertM (FlagVariety n) (incidenceQ n v))
+
+/- Stability of the incidence condition under the relevant group. -/
+theorem incidenceConditionInvariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v) := by
+  intro n u v d hn
+  unfold IncidenceCondition
+  apply product_subscheme_invariant
+  · exact translatedSchubertStable n u v d hn
+  · exact oppositeSchubertStable n u v d hn
 
 theorem incidenceSchemeInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
@@ -123,9 +167,12 @@ theorem incidenceInclusion_equivariant :
   apply preimage_inclusion_equivariant
   exact stableMapEv12_equivariant n d
 
-axiom stableMapEv3_equivariant :
+theorem stableMapEv3_equivariant :
     ∀ (n : Nat) (d : Degree),
-      IsEquivariant (IncidenceGroup n) (stableMapEv3 n d)
+      IsEquivariant (IncidenceGroup n) (stableMapEv3 n d) := by
+  intro n d
+  apply incidenceGroup_from_postComposition_ev3
+  exact stableMapPostCompositionEv3_equivariant n d
 
 theorem ev3_equivariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
