@@ -43,6 +43,13 @@ theorem a0_tau_a0_eq_w0 (n : Nat) (hn : 0 < n) (i : Fin (2*n)) :
   simp [a0, tau, w0]
   split_ifs with h1 h2 h3 <;> omega
 
+/- Manuscript Lemma `lem:conjugation`, permutation-computation part. -/
+theorem manuscript_lem_conjugation_permutation
+    (n : Nat) (hn : 0 < n) :
+    ∀ i : Fin (2*n), a0 n (tau n (a0 n i)) = w0 (2*n) i := by
+  intro i
+  exact a0_tau_a0_eq_w0 n hn i
+
 def inInversionSet {m : Nat} (w : Fin m → Fin m) (p q : Fin m) : Prop :=
   (p : Nat) < (q : Nat) ∧ (w p : Nat) > (w q : Nat)
 
@@ -119,5 +126,17 @@ theorem tauInversionRectangle_mem_iff (n : Nat) (hn : 0 < n)
       · apply Fin.ext
         simp
         omega
+
+/- Manuscript Lemma `lem:inversions`, finite-index form. -/
+theorem manuscript_lem_inversions
+    (n : Nat) (hn : 0 < n) (p q : Fin (2*n)) :
+    inInversionSet (tau n) p q ↔
+      (p : Nat) < n ∧ n ≤ (q : Nat) ∧ (p : Nat) < (q : Nat) := by
+  exact tau_inversion_iff n hn p q
+
+/- Manuscript Lemma `lem:inversions`, counted rectangle form. -/
+theorem manuscript_lem_inversions_count (n : Nat) :
+    (tauInversionRectangle n).length = n * n := by
+  exact tauInversionRectangle_length n
 
 end SchubertPositivity

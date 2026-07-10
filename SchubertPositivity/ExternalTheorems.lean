@@ -12,13 +12,20 @@ namespace SchubertPositivity
 
 opaque Perm : Type
 opaque Degree : Type
-opaque Poly : Type
+opaque Coeff : Type
 
-opaque StableCoeff : Perm → Perm → Perm → Poly
-opaque FiniteTwistedCoeff : Nat → Perm → Perm → Perm → Poly
-opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Poly
+abbrev QuantumPoly : Type := Degree → Coeff
 
-opaque InPositiveCone : Poly → Prop
+opaque StableCoeff : Perm → Perm → Perm → QuantumPoly
+opaque TwistedGWCoeff : Nat → Perm → Perm → Perm → Degree → Coeff
+
+def FiniteTwistedCoeff (n : Nat) (u v w : Perm) : QuantumPoly :=
+  TwistedGWCoeff n u v w
+
+opaque CoeffPositive : Coeff → Prop
+
+def InPositiveCone (P : QuantumPoly) : Prop :=
+  ∀ d : Degree, CoeffPositive (P d)
 
 /- Proposition `prop:stable-finite` in the manuscript.
    Source input: Lam--Shimozono stability and finite support of the product.
@@ -28,14 +35,16 @@ axiom stable_finite_comparison :
       ∃ n : Nat, 0 < n ∧
         StableCoeff u v w = FiniteTwistedCoeff n u v w
 
-/- Proposition `prop:coefficient-gw`, used only at the positivity level here.
-   The detailed equality with the degree expansion will be unfolded after the
-   polynomial/quantum-series layer is formalized.
+/- Positivity extraction from Proposition `prop:coefficient-gw`.
+   In the current abstraction a quantum polynomial is already represented by
+   its degree-indexed coefficients, so this is a definition-level proof.
 -/
-axiom coefficient_gw_preserves_positivity :
+theorem coefficient_gw_preserves_positivity :
     ∀ (n : Nat) (u v w : Perm),
-      (∀ d : Degree, InPositiveCone (TwistedGWCoeff n u v w d)) →
-        InPositiveCone (FiniteTwistedCoeff n u v w)
+      (∀ d : Degree, CoeffPositive (TwistedGWCoeff n u v w d)) →
+        InPositiveCone (FiniteTwistedCoeff n u v w) := by
+  intro n u v w h d
+  exact h d
 
 /- Proposition `prop:twisted-positive`.
    Source input: incidence-cycle expression, invariance/effectivity, refined
@@ -44,6 +53,6 @@ axiom coefficient_gw_preserves_positivity :
 axiom twisted_gw_positive :
     ∀ (n : Nat) (u v w : Perm) (d : Degree),
       0 < n →
-        InPositiveCone (TwistedGWCoeff n u v w d)
+        CoeffPositive (TwistedGWCoeff n u v w d)
 
 end SchubertPositivity
