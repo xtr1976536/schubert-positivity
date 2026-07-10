@@ -39,9 +39,9 @@ def w0 (m : Nat) : Fin m → Fin m :=
 -/
 theorem a0_tau_a0_eq_w0 (n : Nat) (hn : 0 < n) (i : Fin (2*n)) :
     a0 n (tau n (a0 n i)) = w0 (2*n) i := by
-  -- This proof is intentionally left as the first serious target.
-  -- It should split on `i.val < n` and then use `omega`.
-  sorry
+  apply Fin.ext
+  simp [a0, tau, w0]
+  split_ifs with h1 h2 h3 <;> omega
 
 def inInversionSet {m : Nat} (w : Fin m → Fin m) (p q : Fin m) : Prop :=
   (p : Nat) < (q : Nat) ∧ (w p : Nat) > (w q : Nat)
@@ -50,15 +50,19 @@ theorem tau_inversion_forward (n : Nat) (hn : 0 < n)
     (p q : Fin (2*n)) :
     inInversionSet (tau n) p q →
       (p : Nat) < n ∧ n ≤ (q : Nat) := by
-  -- First target for the inversion-set calculation.
-  sorry
+  intro h
+  rcases h with ⟨hpq, hgt⟩
+  simp [tau] at hgt
+  split_ifs at hgt with hp hq <;> omega
 
 theorem tau_inversion_backward (n : Nat) (hn : 0 < n)
     (p q : Fin (2*n)) :
     (p : Nat) < n → n ≤ (q : Nat) → (p : Nat) < (q : Nat) →
       inInversionSet (tau n) p q := by
-  -- Converse direction.
-  sorry
+  intro hp hq hpq
+  constructor
+  · exact hpq
+  · simp [tau]
+    split_ifs with hp' hq' <;> omega
 
 end SchubertPositivity
-
