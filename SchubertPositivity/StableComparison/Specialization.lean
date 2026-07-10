@@ -15,6 +15,15 @@ namespace StableComparison
 def Monomial.BoundedBy (N : Nat) (m : Monomial) : Prop :=
   ∀ i ∈ m, i ≤ N
 
+theorem Monomial.variableBound_controls_terms
+    (N : Nat) (m : Monomial) :
+    Monomial.variableBound m ≤ N →
+      Monomial.BoundedBy N m := by
+  intro hm i hi
+  unfold Monomial.variableBound at hm
+  have hiBound := le_listNatMax_of_mem hi
+  omega
+
 opaque specializeMonomial : Nat → Monomial → Monomial
 
 /- The only primitive specialization input retained at this layer.  It says
@@ -29,6 +38,19 @@ def specializeRawPoly (N : Nat) (p : RawPoly) : RawPoly :=
 
 def RawPoly.BoundedBy (N : Nat) (p : RawPoly) : Prop :=
   ∀ term ∈ p, Monomial.BoundedBy N term.2
+
+theorem RawPoly.variableBound_controls_terms
+    (N : Nat) (p : RawPoly) :
+    RawPoly.variableBound p ≤ N →
+      RawPoly.BoundedBy N p := by
+  intro hp term hterm
+  apply Monomial.variableBound_controls_terms N term.2
+  unfold RawPoly.variableBound at hp
+  have htermBound : Monomial.variableBound term.2 ≤
+      listNatMax (p.map fun term => Monomial.variableBound term.2) := by
+    apply le_listNatMax_of_mem
+    exact List.mem_map_of_mem (fun term => Monomial.variableBound term.2) hterm
+  omega
 
 theorem specializeRawPoly_eq_self_of_bounded
     (N : Nat) (p : RawPoly) :
@@ -51,6 +73,13 @@ def specializeQuantumPoly (N : Nat) (P : QuantumPoly) : QuantumPoly :=
 
 def QuantumPoly.BoundedBy (N : Nat) (P : QuantumPoly) : Prop :=
   ∀ d : Degree, RawPoly.BoundedBy N (P d)
+
+theorem QuantumPoly.boundedBy_of_coeff_variableBound
+    (N : Nat) (P : QuantumPoly) :
+    (∀ d : Degree, RawPoly.variableBound (P d) ≤ N) →
+      QuantumPoly.BoundedBy N P := by
+  intro hP d
+  exact RawPoly.variableBound_controls_terms N (P d) (hP d)
 
 theorem specializeQuantumPoly_eq_self_of_bounded
     (N : Nat) (P : QuantumPoly) :

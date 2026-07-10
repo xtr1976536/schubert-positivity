@@ -14,14 +14,16 @@ opaque finiteProductCoeff : Nat → Perm → Perm → Perm → QuantumPoly
 def specializedStableCoeff (N : Nat) (u v w : Perm) : QuantumPoly :=
   specializeQuantumPoly N (stableCoeff u v w)
 
-/- The declared quantum-variable bound controls the actual variable support of
-the polynomial.  This is not Lam--Shimozono-specific; it is the bridge between
-the abstract bound stored in `StableExpansionData` and the concrete
-finite-support model in `Specialization.lean`. -/
-axiom quantumVariableBound_bounds_terms :
+/- A computed coefficient bound controls the actual variable support of the
+polynomial.  The only remaining Lam--Shimozono input is that the stable
+expansion data stores a `qBound` above these computed coefficient bounds. -/
+theorem quantumVariableBound_bounds_terms :
     ∀ (N : Nat) (P : QuantumPoly),
-      quantumVariableBound P ≤ N →
+      (∀ d : Degree, RawPoly.variableBound (P d) ≤ N) →
         QuantumPoly.BoundedBy N P
+    := by
+  intro N P hP
+  exact QuantumPoly.boundedBy_of_coeff_variableBound N P hP
 
 /- Lam--Shimozono finite support / triangularity input. -/
 axiom LS_product_expansion_data :
@@ -52,7 +54,7 @@ theorem finite_specialization_preserves_bounded_terms :
   rw [← hcoeff]
   exact (specializeQuantumPoly_eq_self_of_bounded N (data.coeff w)
     (quantumVariableBound_bounds_terms N (data.coeff w)
-      (Nat.le_trans (data.coeff_qBound w) hq))).symm
+      (fun d => Nat.le_trans (data.coeff_qBound w d) hq))).symm
 
 /- Lam--Shimozono stability identifies the specialized stable product with the
 finite product in the Kim quotient at the same rank. -/
