@@ -16,18 +16,9 @@ namespace StableComparison
 abbrev QuantumPoly : Type := Degree → RawPoly
 
 opaque permRankBound : Perm → Nat
-opaque quantumVariableBound : QuantumPoly → Nat
 
 def PermInRank (N : Nat) (w : Perm) : Prop :=
   permRankBound w ≤ N
-
-structure StableExpansionData (u v : Perm) where
-  support : List Perm
-  qBound : Nat
-  coeff : Perm → QuantumPoly
-  support_complete : ∀ z : Perm, coeff z ≠ (fun _ => RawPoly.zero) → z ∈ support
-  coeff_qBound : ∀ z : Perm, quantumVariableBound (coeff z) ≤ qBound
-  coeff_qBound : ∀ z : Perm, quantumVariableBound (coeff z) ≤ qBound
 
 def listNatMax : List Nat → Nat
   | [] => 0
@@ -43,6 +34,20 @@ theorem le_listNatMax_of_mem {xs : List Nat} {x : Nat}
       · omega
       · have hy := ih hmem
         omega
+
+def Monomial.variableBound (m : Monomial) : Nat :=
+  listNatMax m
+
+def RawPoly.variableBound (p : RawPoly) : Nat :=
+  listNatMax (p.map fun term => Monomial.variableBound term.2)
+
+structure StableExpansionData (u v : Perm) where
+  support : List Perm
+  qBound : Nat
+  coeff : Perm → QuantumPoly
+  support_complete : ∀ z : Perm, coeff z ≠ (fun _ => RawPoly.zero) → z ∈ support
+  coeff_qBound : ∀ (z : Perm) (d : Degree),
+    RawPoly.variableBound (coeff z d) ≤ qBound
 
 def supportRankBound (xs : List Perm) : Nat :=
   listNatMax (xs.map permRankBound)
