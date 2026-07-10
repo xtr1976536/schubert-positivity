@@ -66,6 +66,19 @@ axiom equivariant_comp :
       IsEquivariant G g →
         IsEquivariant G (morphismComp f g)
 
+/- Equivariant preimages of invariant schemes are invariant. -/
+axiom invariant_preimage_of_equivariant :
+    ∀ {X Y : Scheme} (G : Group) (f : Morphism X Y) (Z : Scheme),
+      IsEquivariant G f →
+      InvariantScheme G Z →
+        InvariantScheme G (schemePreimage f Z)
+
+/- The inclusion of an equivariant preimage is equivariant. -/
+axiom preimage_inclusion_equivariant :
+    ∀ {X Y : Scheme} (G : Group) (f : Morphism X Y) (Z : Scheme),
+      IsEquivariant G f →
+        IsEquivariant G (preimageInclusion f Z)
+
 /- Gao--Xiong refined Graham positivity, in coefficient form for a single
 effective invariant cycle.  The refined root-cone-to-`t_i-y_j` identification is
 handled separately by the manuscript's proved inversion lemma.

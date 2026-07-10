@@ -14,9 +14,17 @@ namespace SchubertPositivity
 
 opaque StableMapSpace : Nat → Degree → Scheme
 opaque FlagVariety : Nat → Scheme
-opaque IncidenceScheme : Nat → Perm → Perm → Degree → Scheme
-opaque incidenceInclusion : (n : Nat) → (u v : Perm) → (d : Degree) →
+opaque FlagProduct : Nat → Scheme
+opaque IncidenceCondition : Nat → Perm → Perm → Scheme
+opaque stableMapEv12 : (n : Nat) → (d : Degree) →
+  Morphism (StableMapSpace n d) (FlagProduct n)
+
+def IncidenceScheme (n : Nat) (u v : Perm) (d : Degree) : Scheme :=
+  schemePreimage (stableMapEv12 n d) (IncidenceCondition n u v)
+
+def incidenceInclusion (n : Nat) (u v : Perm) (d : Degree) :
   Morphism (IncidenceScheme n u v d) (StableMapSpace n d)
+  := preimageInclusion (stableMapEv12 n d) (IncidenceCondition n u v)
 opaque stableMapEv3 : (n : Nat) → (d : Degree) →
   Morphism (StableMapSpace n d) (FlagVariety n)
 
@@ -55,10 +63,24 @@ theorem incidenceFundamentalCycleEffective :
   exact incidenceSchemeReduced n u v d hn
 
 /- Stability of the incidence scheme under the relevant group. -/
-axiom incidenceSchemeInvariant :
+axiom incidenceConditionInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
-        InvariantScheme (IncidenceGroup n) (IncidenceScheme n u v d)
+        InvariantScheme (IncidenceGroup n) (IncidenceCondition n u v)
+
+axiom stableMapEv12_equivariant :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (IncidenceGroup n) (stableMapEv12 n d)
+
+theorem incidenceSchemeInvariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (IncidenceScheme n u v d) := by
+  intro n u v d hn
+  unfold IncidenceScheme
+  apply invariant_preimage_of_equivariant
+  · exact stableMapEv12_equivariant n d
+  · exact incidenceConditionInvariant n u v d hn
 
 theorem incidenceFundamentalCycleInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
@@ -69,9 +91,13 @@ theorem incidenceFundamentalCycleInvariant :
   apply fundamental_cycle_invariant_of_invariant_scheme
   exact incidenceSchemeInvariant n u v d hn
 
-axiom incidenceInclusion_equivariant :
+theorem incidenceInclusion_equivariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
-      IsEquivariant (IncidenceGroup n) (incidenceInclusion n u v d)
+      IsEquivariant (IncidenceGroup n) (incidenceInclusion n u v d) := by
+  intro n u v d
+  unfold incidenceInclusion
+  apply preimage_inclusion_equivariant
+  exact stableMapEv12_equivariant n d
 
 axiom stableMapEv3_equivariant :
     ∀ (n : Nat) (d : Degree),

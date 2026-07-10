@@ -20,6 +20,10 @@ opaque WeylElement : Type
 
 opaque morphismComp {X Y Z : Scheme} :
   Morphism X Y → Morphism Y Z → Morphism X Z
+opaque schemePreimage {X Y : Scheme} :
+  Morphism X Y → Scheme → Scheme
+opaque preimageInclusion {X Y : Scheme} (f : Morphism X Y) (Z : Scheme) :
+  Morphism (schemePreimage f Z) X
 
 opaque IsIrreducible : Scheme → Prop
 opaque IsReduced : Scheme → Prop
