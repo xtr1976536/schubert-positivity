@@ -1,4 +1,4 @@
-import SchubertPositivity.StableComparison.Basic
+import SchubertPositivity.StableComparison.Specialization
 
 /-!
 Small Lam--Shimozono/Kim interfaces used to prove the stable-finite comparison.
@@ -9,8 +9,19 @@ namespace StableComparison
 
 opaque stableCoeff : Perm → Perm → Perm → QuantumPoly
 opaque finiteTwistedCoeff : Nat → Perm → Perm → Perm → QuantumPoly
-opaque specializedStableCoeff : Nat → Perm → Perm → Perm → QuantumPoly
 opaque finiteProductCoeff : Nat → Perm → Perm → Perm → QuantumPoly
+
+def specializedStableCoeff (N : Nat) (u v w : Perm) : QuantumPoly :=
+  specializeQuantumPoly N (stableCoeff u v w)
+
+/- The declared quantum-variable bound controls the actual variable support of
+the polynomial.  This is not Lam--Shimozono-specific; it is the bridge between
+the abstract bound stored in `StableExpansionData` and the concrete
+finite-support model in `Specialization.lean`. -/
+axiom quantumVariableBound_bounds_terms :
+    ∀ (N : Nat) (P : QuantumPoly),
+      quantumVariableBound P ≤ N →
+        QuantumPoly.BoundedBy N P
 
 /- Lam--Shimozono finite support / triangularity input. -/
 axiom LS_product_expansion_data :
@@ -24,15 +35,24 @@ axiom LS_expansion_coeff_eq :
 
 /- Finite specialization does not change bounded stable coefficients.  This is
 the part of Proposition `prop:stable-finite` where `sp_N^{qa}` kills no
-appearing `x`, `a`, or `q` variable. -/
-axiom finite_specialization_preserves_bounded_terms :
+appearing `x`, `a`, or `q` variable.  The proof is now pure bookkeeping from
+the monomial-level specialization interface in `Specialization.lean`. -/
+theorem finite_specialization_preserves_bounded_terms :
     ∀ (N : Nat) (u v w : Perm) (data : StableExpansionData u v),
       0 < N →
       PermInRank N u →
       PermInRank N v →
       PermInRank N w →
+      data.coeff w = stableCoeff u v w →
       data.qBound ≤ N →
         stableCoeff u v w = specializedStableCoeff N u v w
+    := by
+  intro N u v w data _hN _hu _hv _hw hcoeff hq
+  unfold specializedStableCoeff
+  rw [← hcoeff]
+  exact (specializeQuantumPoly_eq_self_of_bounded N (data.coeff w)
+    (quantumVariableBound_bounds_terms N (data.coeff w)
+      (Nat.le_trans (data.coeff_qBound w) hq))).symm
 
 /- Lam--Shimozono stability identifies the specialized stable product with the
 finite product in the Kim quotient at the same rank. -/
@@ -64,13 +84,14 @@ theorem Kim_finite_comparison_at_bound :
       PermInRank N u →
       PermInRank N v →
       PermInRank N w →
+      data.coeff w = stableCoeff u v w →
       data.qBound ≤ N →
         stableCoeff u v w = finiteTwistedCoeff N u v w
     := by
-  intro N u v w data hN hu hv hw hq
+  intro N u v w data hN hu hv hw hcoeff hq
   calc
     stableCoeff u v w = specializedStableCoeff N u v w :=
-      finite_specialization_preserves_bounded_terms N u v w data hN hu hv hw hq
+      finite_specialization_preserves_bounded_terms N u v w data hN hu hv hw hcoeff hq
     _ = finiteProductCoeff N u v w :=
       stable_product_specializes_to_finite_product N u v w data hN hu hv hw hq
     _ = finiteTwistedCoeff N u v w :=
@@ -89,6 +110,7 @@ theorem stable_finite_comparison_from_interfaces :
   · exact u_in_comparisonBound u v w data
   · exact v_in_comparisonBound u v w data
   · exact w_in_comparisonBound u v w data
+  · exact LS_expansion_coeff_eq u v w
   · exact qBound_le_comparisonBound u v w data
 
 end StableComparison
