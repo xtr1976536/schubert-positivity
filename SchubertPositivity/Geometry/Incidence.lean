@@ -15,8 +15,14 @@ namespace SchubertPositivity
 opaque StableMapSpace : Nat → Degree → Scheme
 opaque FlagVariety : Nat → Scheme
 opaque IncidenceScheme : Nat → Perm → Perm → Degree → Scheme
-opaque ev3 : (n : Nat) → (u v : Perm) → (d : Degree) →
+opaque incidenceInclusion : (n : Nat) → (u v : Perm) → (d : Degree) →
+  Morphism (IncidenceScheme n u v d) (StableMapSpace n d)
+opaque stableMapEv3 : (n : Nat) → (d : Degree) →
+  Morphism (StableMapSpace n d) (FlagVariety n)
+
+def ev3 (n : Nat) (u v : Perm) (d : Degree) :
   Morphism (IncidenceScheme n u v d) (FlagVariety n)
+  := morphismComp (incidenceInclusion n u v d) (stableMapEv3 n d)
 
 def IncidenceCycleGeom (n : Nat) (u v : Perm) (d : Degree) : Cycle :=
   cyclePushforward (ev3 n u v d) (fundamentalCycle (IncidenceScheme n u v d))
@@ -63,9 +69,22 @@ theorem incidenceFundamentalCycleInvariant :
   apply fundamental_cycle_invariant_of_invariant_scheme
   exact incidenceSchemeInvariant n u v d hn
 
-axiom ev3_equivariant :
+axiom incidenceInclusion_equivariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
-      IsEquivariant (IncidenceGroup n) (ev3 n u v d)
+      IsEquivariant (IncidenceGroup n) (incidenceInclusion n u v d)
+
+axiom stableMapEv3_equivariant :
+    ∀ (n : Nat) (d : Degree),
+      IsEquivariant (IncidenceGroup n) (stableMapEv3 n d)
+
+theorem ev3_equivariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      IsEquivariant (IncidenceGroup n) (ev3 n u v d) := by
+  intro n u v d
+  unfold ev3
+  apply equivariant_comp
+  · exact incidenceInclusion_equivariant n u v d
+  · exact stableMapEv3_equivariant n d
 
 theorem incidenceCycleGeom_effective
     (n : Nat) (u v : Perm) (d : Degree) (hn : 0 < n) :

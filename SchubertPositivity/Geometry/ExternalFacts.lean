@@ -58,6 +58,14 @@ axiom equivariant_pushforward_invariant :
       InvariantCycle G Z →
         InvariantCycle G (cyclePushforward f Z)
 
+/- Composition of equivariant morphisms is equivariant. -/
+axiom equivariant_comp :
+    ∀ {X Y Z : Scheme} (G : Group)
+      (f : Morphism X Y) (g : Morphism Y Z),
+      IsEquivariant G f →
+      IsEquivariant G g →
+        IsEquivariant G (morphismComp f g)
+
 /- Gao--Xiong refined Graham positivity, in coefficient form for a single
 effective invariant cycle.  The refined root-cone-to-`t_i-y_j` identification is
 handled separately by the manuscript's proved inversion lemma.

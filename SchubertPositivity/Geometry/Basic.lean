@@ -18,6 +18,9 @@ opaque Morphism : Scheme → Scheme → Type
 opaque Cycle : Type
 opaque WeylElement : Type
 
+opaque morphismComp {X Y Z : Scheme} :
+  Morphism X Y → Morphism Y Z → Morphism X Z
+
 opaque IsIrreducible : Scheme → Prop
 opaque IsReduced : Scheme → Prop
 opaque IsLocallyIrreducible : Scheme → Prop
