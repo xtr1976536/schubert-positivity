@@ -22,9 +22,9 @@ These replace the former single axiom `lam_shimozono_stable_finite_comparison`.
 
 - `LS_product_expansion_data`;
 - `LS_expansion_coeff_eq`;
-- `finite_specialization_preserves_bounded_terms`;
 - `stable_product_specializes_to_finite_product`;
 - `kim_basis_unique_coefficients`.
+- `specialization_act_on_bounded_monomial`.
 
 ## Geometry Axioms
 
@@ -32,7 +32,8 @@ These replace the former single axiom `lam_shimozono_stable_finite_comparison`.
 
 - `fw_mihalcea_preimage`;
 - `kontsevich_moduli_irreducible`;
-- `mihalcea_projection_duality_coefficient`;
+- `mihalcea_projection_formula_coefficient`;
+- `equivariant_poincare_duality_coefficient`;
 - `mihalcea_expected_codim_pullback`;
 - `gao_xiong_refined_graham_positive_for_cycle`.
 
@@ -45,15 +46,18 @@ These replace the former single axiom `lam_shimozono_stable_finite_comparison`.
 - `equivariant_comp`;
 - `invariant_preimage_of_equivariant`;
 - `preimage_inclusion_equivariant`;
-- `incidenceConditionInvariant`;
-- `stableMapEv12_equivariant`;
-- `stableMapEv3_equivariant`.
+- `product_subscheme_invariant`;
+- `equivariant_of_restricted_action`;
+- `tauXuStable`;
+- `xvStable`;
+- `stableMapPostCompositionEv12_equivariant`;
+- `stableMapPostCompositionEv3_equivariant`;
+- `stableMapPostComposition_restricts_to_incidenceGroup`.
 
 ## Immediate Reduction Targets
 
-1. Replace `incidenceConditionInvariant` by a theorem from factor stability and
-   product stability.
-2. Replace `stableMapEv12_equivariant` and `stableMapEv3_equivariant` by
-   theorems from the post-composition action on stable maps.
-3. Split `mihalcea_projection_duality_coefficient` into smaller Mihalcea
-   projection/duality interfaces.
+1. Replace `tauXuStable` and `xvStable` by theorems from Schubert stability.
+2. Replace the post-composition evaluation-map axioms by a general stable-map
+   action formalization.
+3. Split `stable_product_specializes_to_finite_product` and
+   `kim_basis_unique_coefficients`.
