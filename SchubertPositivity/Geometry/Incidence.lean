@@ -36,11 +36,20 @@ theorem incidenceFundamentalCycleEffective :
   apply fundamental_cycle_effective_of_reduced
   exact incidenceSchemeReduced n u v d hn
 
-axiom incidenceFundamentalCycleInvariant :
+/- Stability of the incidence scheme under the relevant group. -/
+axiom incidenceSchemeInvariant :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (IncidenceScheme n u v d)
+
+theorem incidenceFundamentalCycleInvariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         InvariantCycle (IncidenceGroup n)
-          (fundamentalCycle (IncidenceScheme n u v d))
+          (fundamentalCycle (IncidenceScheme n u v d)) := by
+  intro n u v d hn
+  apply fundamental_cycle_invariant_of_invariant_scheme
+  exact incidenceSchemeInvariant n u v d hn
 
 axiom ev3_equivariant :
     ∀ (n : Nat) (u v : Perm) (d : Degree),

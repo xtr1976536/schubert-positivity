@@ -24,6 +24,7 @@ opaque IsLocallyIrreducible : Scheme → Prop
 opaque IsSmooth : Scheme → Prop
 opaque IsPureCodimension : Scheme → Nat → Prop
 opaque IsEquivariant {X Y : Scheme} : Group → Morphism X Y → Prop
+opaque InvariantScheme : Group → Scheme → Prop
 
 opaque EffectiveCycle : Cycle → Prop
 opaque InvariantCycle : Group → Cycle → Prop

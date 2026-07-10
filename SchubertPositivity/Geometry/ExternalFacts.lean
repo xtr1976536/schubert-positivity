@@ -45,6 +45,12 @@ axiom proper_pushforward_effective :
 axiom fundamental_cycle_effective_of_reduced :
     ∀ X : Scheme, IsReduced X → EffectiveCycle (fundamentalCycle X)
 
+/- The fundamental cycle of an invariant scheme is invariant. -/
+axiom fundamental_cycle_invariant_of_invariant_scheme :
+    ∀ (G : Group) (X : Scheme),
+      InvariantScheme G X →
+        InvariantCycle G (fundamentalCycle X)
+
 /- Equivariant pushforward preserves invariance. -/
 axiom equivariant_pushforward_invariant :
     ∀ {X Y : Scheme} (G : Group) (f : Morphism X Y) (Z : Cycle),
