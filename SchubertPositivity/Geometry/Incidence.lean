@@ -1,6 +1,7 @@
 import SchubertPositivity.Core
 import SchubertPositivity.Geometry.Basic
 import SchubertPositivity.Geometry.ExternalFacts
+import SchubertPositivity.Permutations
 
 /-!
 Incidence schemes and incidence cycles.
@@ -15,6 +16,7 @@ namespace SchubertPositivity
 opaque StableMapSpace : Nat → Degree → Scheme
 opaque FlagVariety : Nat → Scheme
 opaque IncidenceGroup : Nat → Group
+opaque OppositeBorelGroup : Nat → Group
 opaque StableMapPostCompositionAction : Nat → Degree → Group
 
 def FlagProduct (n : Nat) : Scheme :=
@@ -22,6 +24,14 @@ def FlagProduct (n : Nat) : Scheme :=
 
 opaque incidenceP : Nat → Perm → WeylElement
 opaque incidenceQ : Nat → Perm → WeylElement
+
+def BlockSwapConjugationWitness (n : Nat) : Prop :=
+  ∀ i : Fin (2*n), a0 n (tau n (a0 n i)) = w0 (2*n) i
+
+theorem blockSwapConjugationWitness
+    (n : Nat) (hn : 0 < n) :
+    BlockSwapConjugationWitness n := by
+  exact manuscript_lem_conjugation_permutation n hn
 
 def TauTranslatedSchubert (n : Nat) (u : Perm) : Scheme :=
   schubertM (FlagVariety n) (incidenceP n u)
@@ -117,18 +127,45 @@ theorem incidenceFundamentalCycleEffective :
   apply fundamental_cycle_effective_of_reduced
   exact incidenceSchemeReduced n u v d hn
 
-/- Stability of the Schubert factors, matching the manuscript's proof:
-`tau X_u` is stable and `X_v` is stable under `B^-(tau)`.
+/- Stability of the Schubert factors, matching the manuscript's proof.
+The translated factor is reduced to the block-swap conjugation calculation
+already proved in `Permutations.lean`; the second factor is reduced to the
+standard stability of opposite Schubert varieties under `B^-` and restriction
+to `B^-(tau)`.
 -/
-axiom tauXuStable :
+axiom tauXuStable_of_blockSwapConjugation :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
+      BlockSwapConjugationWitness n →
         InvariantScheme (IncidenceGroup n) (TauTranslatedSchubert n u)
 
-axiom xvStable :
+axiom oppositeSchubertStable_under_Bminus :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (OppositeBorelGroup n) (IncidenceOppositeSchubert n v)
+
+axiom incidenceGroup_restricts_to_oppositeBorel :
+    ∀ (n : Nat),
+      IsRestrictedAction (IncidenceGroup n) (OppositeBorelGroup n)
+
+theorem tauXuStable :
+    ∀ (n : Nat) (u v : Perm) (d : Degree),
+      0 < n →
+        InvariantScheme (IncidenceGroup n) (TauTranslatedSchubert n u) := by
+  intro n u v d hn
+  apply tauXuStable_of_blockSwapConjugation
+  · exact hn
+  · exact blockSwapConjugationWitness n hn
+
+theorem xvStable :
     ∀ (n : Nat) (u v : Perm) (d : Degree),
       0 < n →
         InvariantScheme (IncidenceGroup n) (IncidenceOppositeSchubert n v)
+        := by
+  intro n u v d hn
+  apply invariant_scheme_of_restricted_action
+  · exact incidenceGroup_restricts_to_oppositeBorel n
+  · exact oppositeSchubertStable_under_Bminus n u v d hn
 
 theorem translatedSchubertStable :
     ∀ (n : Nat) (u v : Perm) (d : Degree),

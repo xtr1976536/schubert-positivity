@@ -84,6 +84,12 @@ axiom equivariant_of_restricted_action :
       IsEquivariant G f →
         IsEquivariant H f
 
+axiom invariant_scheme_of_restricted_action :
+    ∀ (H G : Group) (X : Scheme),
+      IsRestrictedAction H G →
+      InvariantScheme G X →
+        InvariantScheme H X
+
 /- Equivariant preimages of invariant schemes are invariant. -/
 axiom invariant_preimage_of_equivariant :
     ∀ {X Y : Scheme} (G : Group) (f : Morphism X Y) (Z : Scheme),

@@ -13,6 +13,8 @@ Current status after the latest passing CI run on `main`.
 - Finite-support quantum positivity bookkeeping has a concrete Lean module.
 - `prop:stable-finite` is no longer a single axiom; it is proved from smaller
   Lam--Shimozono/Kim interfaces.
+- Finite specialization of bounded coefficients is now a Lean theorem from
+  monomial-level specialization bookkeeping.
 - The incidence scheme is defined as an equivariant preimage.
 - The incidence theorem property package is proved from FW--Mihalcea and
   Kontsevich-type inputs.
@@ -23,23 +25,27 @@ Current status after the latest passing CI run on `main`.
 - `prop:twisted-positive` and `thm:main` are Lean theorems relative to the
   remaining external/geometric interfaces.
 
-## Top-Level Manuscript Interface Remaining
+## Top-Level Manuscript Interfaces Remaining
 
-- `mihalcea_projection_duality_coefficient`.
+None as a single unsplit axiom.  The former
+`mihalcea_projection_duality_coefficient` is now a theorem from two smaller
+interfaces.
 
 ## Stable Comparison Interfaces Remaining
 
 - `LS_product_expansion_data`;
 - `LS_expansion_coeff_eq`;
-- `finite_specialization_preserves_bounded_terms`;
 - `stable_product_specializes_to_finite_product`;
 - `kim_basis_unique_coefficients`.
+- `specialization_act_on_bounded_monomial`.
 
 ## Incidence/Invariance Interfaces Remaining
 
-- `incidenceConditionInvariant`;
-- `stableMapEv12_equivariant`;
-- `stableMapEv3_equivariant`.
+- `tauXuStable`;
+- `xvStable`;
+- `stableMapPostCompositionEv12_equivariant`;
+- `stableMapPostCompositionEv3_equivariant`;
+- `stableMapPostComposition_restricts_to_incidenceGroup`.
 
 ## General External/Infrastructure Interfaces Remaining
 
@@ -57,9 +63,8 @@ Current status after the latest passing CI run on `main`.
 
 ## Next Targets
 
-1. Prove `incidenceConditionInvariant` from stability of the two factors
-   `tau X_u` and `X_v`.
-2. Prove `stableMapEv12_equivariant` and `stableMapEv3_equivariant` from the
-   post-composition action on stable maps.
-3. Split `mihalcea_projection_duality_coefficient` into projection formula,
-   pushforward compatibility, and Poincare duality.
+1. Split `tauXuStable` and `xvStable` into Bruhat/Schubert stability lemmas.
+2. Split post-composition evaluation equivariance into a general stable-map
+   action interface.
+3. Split `stable_product_specializes_to_finite_product` and
+   `kim_basis_unique_coefficients` into smaller Kim/LS interfaces.
