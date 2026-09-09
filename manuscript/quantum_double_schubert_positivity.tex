@@ -1,0 +1,354 @@
+\documentclass[12pt]{amsart}
+\setlength{\parskip}{3pt}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{tikz,tikz-cd}
+\usetikzlibrary{matrix,arrows,decorations.pathreplacing,calc,positioning}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=red,
+    citecolor=Green
+    }
+
+\renewcommand{\familydefault}{lmr}
+\advance\paperheight1.00cm
+\advance\textheight1.00cm
+\advance\vsize1.00cm
+\advance\topskip-0.5cm
+\advance\voffset-0.5cm
+%
+\oddsidemargin0.15cm
+\evensidemargin0.15cm
+\textwidth16.1cm
+
+\DeclareTextFontCommand{\emph}{\color{Blue}\em}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem*{claim}{Claim}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem*{claimone}{Claim 1.1}
+
+\theoremstyle{definition}
+\newtheorem{ex}[theorem]{Example}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\setlist[enumerate]{label=(\roman*),leftmargin=2em}
+
+\DeclareMathOperator{\codim}{codim}
+\DeclareMathOperator{\ev}{ev}
+\DeclareMathOperator{\Fl}{Fl}
+\newcommand{\bN}{\mathbb{N}}
+\newcommand{\pt}{\mathrm{pt}}
+
+\title[Graham Positivity of Quantum Double Schubert Polynomials]{Graham Positivity of Quantum Double Schubert Polynomials}
+\author{Tongren Xiao}
+\author{Yihua Yue}
+\date{}
+\address{}
+\email{}
+
+\begin{document}
+
+\begin{abstract}
+We prove a positivity property for coefficients in the product expansion of quantum double Schubert polynomials. 
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+Let \(S_\infty=\bigcup_{m\ge1}S_m\),
+\(\mathbf{x}=(x_1,x_2,\ldots)\),
+\(\mathbf{y}=(y_1,y_2,\ldots)\),
+\(\mathbf{t}=(t_1,t_2,\ldots)\) and 
+\(\mathbf{q}=(q_1,q_2,\ldots)\).
+Since \(\mathbb{Z}[\mathbf{x},\mathbf{t}][\mathbf{q}]=\bigoplus_{w\in S_\infty}\mathbb{Z}[\mathbf{t}][\mathbf{q}]\mathfrak{S}_w^q(\mathbf{x};\mathbf{t})\), we can consider the
+following product expansion by extending scalars from
+\(\mathbb{Z}[\mathbf{t}][\mathbf{q}]\) to
+\(\mathbb{Z}[\mathbf{y},\mathbf{t}][\mathbf{q}]\):
+\begin{equation}\label{eq:stable-product-cn}
+\mathfrak{S}_u^q(\mathbf{x};\mathbf{y})\,
+\mathfrak{S}_v^q(\mathbf{x};\mathbf{t})
+=
+\sum_{w\in S_\infty}
+C_{u,v}^{w}(\mathbf{y},\mathbf{t};\mathbf{q})\,
+\mathfrak{S}_w^q(\mathbf{x};\mathbf{t}).
+\end{equation}
+
+\begin{claim}\label{claim:main-cn}
+For any \(u,v,w\in S_\infty\),
+\[
+C_{u,v}^{w}(\mathbf{y},\mathbf{t};\mathbf{q})
+\in
+\bN[t_i-y_j,q_k\mid i,j,k\ge1].
+\]
+\end{claim}
+
+For fixed
+\(u,v\in S_\infty\), since the direct sum decomposition should be finite, 
+we can choose \(n\) sufficiently large s.t. \(u,v\)
+and every permutation occurring in the expansion belong to \(S_n\),
+while every variable occurring in its coefficients is among
+\(y_1,\ldots,y_n\), \(t_1,\ldots,t_n\), and
+\(q_1,\ldots,q_{2n-1}\). Write \(\mathbf{x}=(x_1,\ldots,x_{2n})\) and
+\(\mathbf{q}=(q_1,\ldots,q_{2n-1})\). Following the parameter
+arrangement method of Gao--Xiong \cite{GX}, set
+\(\mathbf a=(t_1,\ldots,t_n,y_1,\ldots,y_n)\), and let
+\(\tau\in S_{2n}\) be the permutation s.t. $\tau\mathbf a=(y_1,\ldots,y_n,t_1,\ldots,t_n)$. \eqref{eq:stable-product-cn} can be rewritten as:
+
+\begin{equation}\label{eq:stable-product-new}
+  \mathfrak S_u^q(\mathbf x;\tau\mathbf a)\mathfrak S_v^q(\mathbf x;\mathbf a)=
+  \sum_{w\in S_{2n}}
+  C_{u,v}^{w,\tau}(\mathbf a;\mathbf q)\mathfrak S_w^q(\mathbf x;\mathbf a). 
+\end{equation}
+
+Following Lam--Shimozono~\cite[Section~2.1]{lam-shimozono},
+let \(e_i\) and \(E_i^{(2n)}\) be the elementary symmetric polynomials
+and their quantum analogues, and write
+\(J_{2n}^{a}=\langle e_i(\mathbf{x})-e_i(\mathbf{a})\rangle\) and
+\(J_{2n}^{qa}=\langle E_i^{(2n)}(\mathbf{x},\mathbf{q})-e_i(\mathbf{a})\rangle\).
+Follow Fomin–Gelfand–Postnikov~\cite[Theorem~1.1, Proposition~3.3]{fomin-gelfand-postnikov} and extend the map by $\mathbb{Z}[\mathbf{a}]$-linearity to a $\mathbb{Z}[\mathbf{q}, \mathbf{a}]$-module automorphism of $\mathbb{Z}[\mathbf{x}, \mathbf{q}, \mathbf{a}]$, as in Lam--Shimozono~\cite[Section~3.3]{lam-shimozono}. This induces a map \(\bar{\theta} : \mathbb{Z}[\mathbf{x}, \mathbf{a}]/J_{2n}^a \to \mathbb{Z}[\mathbf{x}, \mathbf{a}, \mathbf{q}]/J_{2n}^{qa}\). 
+
+Classical equivariant Borel presentation gives an isomorphism between \(\mathbb{Z}[\mathbf{x},\mathbf{a}]/J_{2n}^a\) and \(H^*_T(\Fl_{2n})\); Kim's presentation~\cite[Theorem~2]{kim-equivariant} gives an isomorphism between \(\mathbb{Z}[\mathbf{x},\mathbf{a},\mathbf{q}]/J_{2n}^{qa}\) and \(QH^*_T(\Fl_{2n})\).
+\(\mathbb{Z}[\mathbf{x},\mathbf{a},\mathbf{q}]/J_{2n}^{qa}\cong QH_T^*(\Fl_{2n})\);
+Lam--Shimozono~\cite[Theorem~5]{lam-shimozono} identifies the basis
+\([\mathfrak{S}_w^q(\mathbf{x};\mathbf{a})]_{J_{2n}^{qa}}\longleftrightarrow\sigma_w^T\). $\phi$ is the canonical $\mathbb{Z}[\mathbf{a}]$-linear embedding sending $[X_w]^T$ to $\sigma_w^T$. We have the following commutative diagram:
+% Three blocks: presentation square | untwisted bases | twisted bases (\tau a)
+\[
+\resizebox{\linewidth}{!}{%
+\begin{tikzcd}[column sep=1.1em, row sep=1.4em, ampersand replacement=\&]
+	{\mathbb{Z}[\mathbf{x},\mathbf{a}]/J_{2n}^{a}}
+		\& {H_T^*(\Fl_{2n})}
+		\&\&
+	{[\mathfrak{S}_w(\mathbf{x};\mathbf{a})]_{J_{2n}^{a}}}
+		\& {[X_w]^T}
+		\&\&
+	{[\mathfrak{S}_u(\mathbf{x};\tau\mathbf{a})]_{J_{2n}^{a}}}
+		\& {[\tau X_u]^T}
+	\\
+	{\mathbb{Z}[\mathbf{x},\mathbf{a},\mathbf{q}]/J_{2n}^{qa}}
+		\& {QH_T^*(\Fl_{2n})}
+		\&\&
+	{[\mathfrak{S}_w^q(\mathbf{x};\mathbf{a})]_{J_{2n}^{qa}}}
+		\& {\sigma_w^T}
+		\&\&
+	{[\mathfrak{S}_u^q(\mathbf{x};\tau\mathbf{a})]_{J_{2n}^{qa}}}
+		\& {\phi([\tau X_u]^T)}
+	% presentation
+	\arrow["\rho_{2n}^{a}"{above}, "\cong"{below}, from=1-1, to=1-2]
+	\arrow["{\bar\theta}"{right}, from=1-1, to=2-1]
+	\arrow["\phi"{right}, from=1-2, to=2-2]
+	\arrow[phantom, "\circlearrowleft", from=1-1, to=2-2]
+	\arrow["\rho_{2n}^{qa}"{above}, "\cong"{below}, from=2-1, to=2-2]
+	% untwisted bases
+	\arrow[maps to, from=1-4, to=1-5]
+	\arrow[maps to, from=1-4, to=2-4]
+	\arrow[maps to, from=1-5, to=2-5]
+	\arrow[maps to, from=2-4, to=2-5]
+	% twisted bases
+	\arrow[maps to, red, from=1-7, to=1-8]
+	\arrow[maps to, blue, from=1-7, to=2-7]
+	\arrow[maps to, Green, from=1-8, to=2-8]
+	\arrow[maps to, from=2-7, to=2-8]
+\end{tikzcd}%
+}
+\]
+\begin{remark}
+The \textcolor{red}{red arrow} is what Gao--Xiong used in geometric proof~\cite{GX}; the \textcolor{blue}{blue arrow} is because of the \(\mathbb{Z}[\mathbf{a}]\)-linearity of \(\bar{\theta}\); the \textcolor{Green}{green arrow} records that the twisted quantum Schubert class is \(\phi([\tau X_u]^T)\),  which allows us to apply Mihalcea’s EQLR.
+\end{remark}
+
+Thus we can convert \eqref{eq:stable-product-new} to a geometric form in the flag variety. Decompose \(\mathfrak S_u^q(\mathbf x;\tau\mathbf a)\) along the quantum Schubert basis, embed the whole polynomial equation to the polynomial classes and map it into \(QH_T^*(\Fl_{2n})\), then compare the coefficients of \(\sigma_w^T\) with the definition of EQLR in Mihalcea~\cite[Section~5]{Mih}. Following Mihalcea's notations~\cite{Mih}, we have
+\begin{equation}\label{eq:EQLR}
+C_{u,v}^{w,\tau}(\mathbf a;\mathbf q)=
+\sum_{\mathbf d\geq 0 } \mathbf{q}^{\mathbf d}
+ (\pi_{\mathcal{M}_{\mathbf d}})_{*}^{T} \left( \text{ev}_{1}^{*}[\tau X_{u}]^{T} \cdot \text{ev}_{2}^{*}[X_{v}]^{T} \cdot \text{ev}_{3}^{*}[Y_{w}]^{T} \cap [\mathcal{M}_{\mathbf d}]^{T} \right).
+\end{equation}
+
+\section{Proof of Claim}
+
+Let \(G=\mathrm{GL}_{2n}\), \(B\subset G\) be a Borel subgroup, 
+\(B^-\) be the opposite Borel, and \(T=B\cap B^-\), so that
+\(X=G/B=\Fl_{2n}\). Following Gao--Xiong~\cite{GX}, let \(N^-\) be the
+unipotent radical of \(B^-\), \(w_0^{(n)}\) be the longest element of
+\(S_{n}\), and write \(N^-(w)=N^-\cap wN^-w^{-1}\),
+\(B^-(w)=TN^-(w)\). For \(w\in S_{2n}\) we take the \(B^-\)-Schubert
+varieties \(X_w=\overline{B^-wB/B}\) and the opposite Schubert varieties
+\(Y_w=\overline{BwB/B}\). For a fixed effective degree \(\mathbf{d}\),
+define \(I_{u,v}^{\mathbf{d}}=(\ev_1,\ev_2)^{-1}(\tau X_u\times X_v)\) and
+\(\Gamma_{u,v}^{\mathbf{d}}=(\ev_3)_*[I_{u,v}^{\mathbf{d}}]\).
+
+\begin{proposition}
+\label{prop:incidence}
+Write
+\(\mathcal{M}_{\mathbf{d}}=\overline{M}_{0,3}(X,\mathbf{d})\) with evaluation
+maps \(\mathrm{ev}_i\) and
+\(F=(\mathrm{ev}_1,\mathrm{ev}_2):\mathcal{M}_{\mathbf{d}}\to X\times X\).
+For every \(u,v\in S_n\), the incidence scheme
+\(I_{u,v}^{\mathbf{d}}=F^{-1}(\tau X_u\times X_v)\) is reduced and locally
+irreducible, and each of its irreducible components has codimension
+\(\ell(u)+\ell(v)\). Moreover,
+\begin{equation}
+\label{eq:expected-pullback}
+\bigl(\mathrm{ev}_1^*[\tau X_u]^T\cdot
+\mathrm{ev}_2^*[X_v]^T\bigr)\cap[\mathcal{M}_{\mathbf{d}}]^T
+=[I_{u,v}^{\mathbf{d}}]^T
+\quad\text{in }H_*^T(\mathcal{M}_{\mathbf{d}}).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Clearly, \(F\) is diagonally \(G\)-equivariant. Let
+\(a_0=1\times w_0^{(n)}\in S_{2n}\). Since \(u,v\in S_n\), one has
+\(a_0X_u=X_u\), \(a_0X_v=X_v\), and \(a_0^{-1}\tau a_0=w_0^{(2n)}\); thus
+diagonal left translation by \(a_0^{-1}\) identifies
+\(\tau X_u\times X_v\) with \(w_0^{(2n)}X_u\times X_v\). The moduli space \(\mathcal{M}_{\mathbf{d}}\)
+is irreducible by Thomsen's theorem \cite[Theorem~1]{thomsen}. By 
+Mihalcea's incidence lemma \cite[Lemma~6.3]{Mih}, 
+\(I_{u,v}^{\mathbf{d}}\) is reduced, locally irreducible, and of
+codimension
+\[
+\operatorname{codim}_X(w_0^{(2n)}X_u)+\ell(v)=\ell(u)+\ell(v).
+\]
+In particular, writing \(W=\tau X_u\times X_v\subset X\times X\), every irreducible
+component of \(F^{-1}(W)=I_{u,v}^{\mathbf{d}}\) has codimension
+\(\operatorname{codim}_{X\times X}W=\ell(u)+\ell(v)\) and algebraic multiplicity
+one. Mihalcea's formula~(2'') \cite[Section~3.1]{Mih}, applied to
+\(F:\mathcal{M}_{\mathbf{d}}\to X\times X\) (with \(X\times X\) smooth),
+therefore yields
+\[
+F^*[W]^T\cap[\mathcal{M}_{\mathbf{d}}]^T
+=[I_{u,v}^{\mathbf{d}}]^T
+\quad\text{in }H_*^T(\mathcal{M}_{\mathbf{d}}).
+\]
+Since \(F^*[W]^T=\mathrm{ev}_1^*[\tau X_u]^T\cdot\mathrm{ev}_2^*[X_v]^T\),
+this is precisely~\eqref{eq:expected-pullback}.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:gamma-properties}
+  The cycle \(\Gamma_{u,v}^{\mathbf{d}}\) is an effective
+  \(B^-(\tau)\)-invariant cycle on \(X\).
+  \end{lemma}
+  
+  \begin{proof}
+  The variety \(X_v\) is \(B^-\)-invariant. If
+  \(h=\tau h'\tau^{-1}\in N^-(\tau)=N^-\cap\tau N^-\tau^{-1}\), then
+  \(h(\tau X_u)=\tau h'X_u\subseteq\tau X_u\). Hence
+  \(\tau X_u\times X_v\) is \(B^-(\tau)\)-invariant, and so is its
+  preimage \(I_{u,v}^{\mathbf{d}}=F^{-1}(\tau X_u\times X_v)\). By Proposition~\ref{prop:incidence}, \(I_{u,v}^{\mathbf{d}}\) is a reduced
+  closed subscheme of \(\mathcal{M}_{\mathbf{d}}\),
+  so its fundamental cycle is effective. Since \(\mathrm{ev}_3\) is proper,
+  the push-forward \(\Gamma_{u,v}^{\mathbf{d}}=(\mathrm{ev}_3)_*[I_{u,v}^{\mathbf{d}}]\)
+  is an effective cycle on \(X\). Moreover \(\mathrm{ev}_3\) is
+  \(G\)-equivariant, so \(\Gamma_{u,v}^{\mathbf{d}}\) is
+  \(B^-(\tau)\)-invariant.
+  \end{proof}
+
+\begin{theorem}
+\label{thm:mih-gysin-package}
+With \(\Gamma_{u,v}^{\mathbf{d}}=(\mathrm{ev}_3)_*[I_{u,v}^{\mathbf{d}}]\), one has:
+\begin{enumerate}
+\item {\rm(Push-forward; \cite[Section~3.1, formula~(2)]{Mih}, applied with
+\(f=\mathrm{ev}_3\), \(g=F\), and \(V=\tau X_u\times X_v\).)}
+\begin{equation}
+\label{eq:pushforward-gamma}
+[\Gamma_{u,v}^{\mathbf{d}}]^T
+=
+(\mathrm{ev}_3)_*^T
+\bigl(\mathrm{ev}_1^*[\tau X_u]^T\cdot
+\mathrm{ev}_2^*[X_v]^T\bigr)
+\quad\text{in }H_T^*(X).
+\end{equation}
+\item {\rm(Projection; \cite[Section~3.1, formula~(1)]{Mih}, applied with
+\(f=\mathrm{ev}_3\), \(a=[Y_w]^T\), and
+\(b=\mathrm{ev}_1^*[\tau X_u]^T\cdot\mathrm{ev}_2^*[X_v]^T\).)}
+\begin{equation}
+\label{eq:projection-gamma}
+(\pi_{\mathcal{M}_{\mathbf{d}}})_*^T\left(\mathrm{ev}_1^*[\tau X_u]^T\cdot\mathrm{ev}_2^*[X_v]^T\cdot\mathrm{ev}_3^*[Y_w]^T\cap[\mathcal{M}_{\mathbf{d}}]^T\right)=
+(\pi_X)_*^T\left([\Gamma_{u,v}^{\mathbf{d}}]^T\,[Y_w]^T\right).
+\end{equation}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+For (i), Proposition~\ref{prop:incidence} and Lemma~\ref{lem:gamma-properties}
+supply the conditions of \cite[Section~3.1, formula~(2)]{Mih}
+(expected codimension, multiplicity one, and \(T\)-invariant components),
+and the resulting push-forward is \([\Gamma_{u,v}^{\mathbf{d}}]^T\) by
+definition of \(\Gamma_{u,v}^{\mathbf{d}}\).
+
+For (ii), write \(b=\mathrm{ev}_1^*[\tau X_u]^T\cdot\mathrm{ev}_2^*[X_v]^T\).
+Formula~(1) of \cite[Section~3.1]{Mih} gives
+\((\mathrm{ev}_3)_*^T(\mathrm{ev}_3^*[Y_w]^T\cdot b)=[Y_w]^T\cdot(\mathrm{ev}_3)_*^T(b)\).
+Using (i) and \(\pi_{\mathcal{M}_{\mathbf{d}}}=\pi_X\circ\mathrm{ev}_3\), this yields
+\eqref{eq:projection-gamma}.
+\end{proof}
+
+\begin{theorem}
+\label{thm:gamma-positivity}
+There is a unique expansion
+\begin{equation}
+\label{eq:expansion-gamma}
+[\Gamma_{u,v}^{\mathbf{d}}]^T
+=
+\sum_{z\in S_{2n}}
+p_{u,v}^{z,\mathbf{d}}(\mathbf{a})\,[X_z]^T
+\quad\text{in }H_T^*(X),
+\end{equation}
+and
+\[
+p_{u,v}^{z,\mathbf{d}}(\mathbf{a})
+\in
+\mathbb{N}[-\alpha]_{\alpha\in I(\tau)}
+=
+\mathbb{N}[t_i-y_j:1\le i,j\le n].
+\]
+Here \(I(\tau)=\{y_j-t_i:1\le i,j\le n\}\) is the left inversion set of
+\(\tau\), in the notation of Gao--Xiong~\cite[Sections~2.1 and~2.3]{GX}.
+\end{theorem}
+
+\begin{proof}
+The classes \(\{[X_z]^T:z\in S_{2n}\}\) form a
+\(\mathbb{Z}[\mathbf{a}]\)-basis of \(H_T^*(X)\), so the expansion exists
+and is unique. Since \(\Gamma_{u,v}^{\mathbf{d}}\) is \(B^-(\tau)\)-invariant by Lemma~\ref{lem:gamma-properties}, apply 
+\cite[Theorem~2.3 and Corollary~2.4]{GX} then we get the desired expansion.
+\end{proof}
+
+Combining \eqref{eq:EQLR}, \eqref{eq:projection-gamma} and \eqref{eq:expansion-gamma}, we obtain
+
+\[
+C_{u,v}^{w,\tau}(\mathbf a;\mathbf q)
+=
+\sum_{\mathbf d\geq 0 } \mathbf{q}^{\mathbf d}
+(\pi_X)_*^T\left([\Gamma_{u,v}^{\mathbf{d}}]^T\,[Y_w]^T\right)
+=
+\sum_{\substack{\mathbf{d}\ge0\\ z\in S_{2n}}}
+p_{u,v}^{z,\mathbf{d}}(\mathbf{a})
+\mathbf{q}^{\mathbf d}
+(\pi_X)_*^T\left([X_z]^T\,[Y_w]^T\right)
+=
+\sum_{\substack{\mathbf{d}\ge0\\ z\in S_{2n}}}
+p_{u,v}^{z,\mathbf{d}}(\mathbf{a})
+\mathbf{q}^{\mathbf d}\,
+\delta_{z,w}.
+\]
+Apply Theorem~\ref{thm:gamma-positivity} then we have \(C_{u,v}^{w,\tau}(\mathbf a;\mathbf q)\in \mathbb{N}[t_i-y_j,q_k\mid i,j,k\ge1]\). This proves the claim.
+
+\bibliographystyle{amsplain}
+\bibliography{arxiv_quantum_positivity}
+\end{document}
